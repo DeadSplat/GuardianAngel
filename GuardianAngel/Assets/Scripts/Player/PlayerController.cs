@@ -4,7 +4,9 @@ using InControl;
 
 public class PlayerController : MonoBehaviour
 {
+	[Header ("Input")]
 	public FirstPersonController fpsController;
+	public PlayerActions playerActions;
 
 	[Range (-1, 1)]
 	public float MovementX;
@@ -13,19 +15,54 @@ public class PlayerController : MonoBehaviour
 	public bool WalkState;
 	public bool JumpState;
 
+	[Header ("Camera")]
 	public Animator CamAnim;
 
-	public PlayerActions playerActions;
+	[Header ("EnemyDetection")]
+	public Collider EnemyChecker;
+
+	public int CurrentHealth;
+	public int StartingHealth = 100;
 
 	void Start ()
 	{
 		CreatePlayerActions ();
+		CurrentHealth = StartingHealth;
 	}
 
 	void Update ()
 	{
 		CheckPlayerInput ();
 		CheckCamAnim ();
+		CheckEnemies ();
+	}
+
+	public void TakeDamage (int Damage)
+	{
+		CurrentHealth -= Damage;
+	}
+
+	void CheckEnemies ()
+	{
+		// Player pressed flashlight.
+		if (playerActions.Flashlight.IsPressed) 
+		{
+			// If enemy checker is off.
+			if (EnemyChecker.enabled == false) 
+			{
+				EnemyChecker.enabled = true; // Turn on enemy checker.
+			}
+		} 
+
+		else 
+		
+		{
+			// If enemy checker is on.
+			if (EnemyChecker.enabled == true) 
+			{
+				EnemyChecker.enabled = false; // Turn of enemy checker.
+			}
+		}
 	}
 
 	void CheckCamAnim ()
