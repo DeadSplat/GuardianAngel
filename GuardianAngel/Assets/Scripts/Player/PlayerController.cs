@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
+using UnityEngine.PostProcessing;
 using InControl;
 
 public class PlayerController : MonoBehaviour
 {
+	public PostProcessingProfile postProcess;
+
 	[Header ("Input")]
 	public FirstPersonController fpsController;
 	public PlayerActions playerActions;
@@ -13,16 +16,41 @@ public class PlayerController : MonoBehaviour
 	[Range (-1, 1)]
 	public float MovementY;
 	public bool WalkState;
-	public bool JumpState;
+	//public bool JumpState;
+
+	[Header ("Sprint")]
+	public float SprintTimeRemaining = 28;
+	public float SprintTimeDuration = 28;
+	public float RecoverMultiplier_Walk = 2;
+	public float RecoverMultiplier_Idle = 3;
+	public ParticleSystem SprintParticles;
+
+	public bool SprintRanOut;
+	public float SprintCooldownTime = 5;
 
 	[Header ("Camera")]
+	public Camera PlayerCam;
 	public Animator CamAnim;
+	public float IdleFov = 55;
+	public float WalkFov = 60;
+	public float SprintFov = 65;
+	public float FovSmoothing = 60;
 
 	[Header ("EnemyDetection")]
 	public Collider EnemyChecker;
 
 	public int CurrentHealth;
 	public int StartingHealth = 100;
+
+	[Header ("Flashlight Settings")]
+	public Light Flashlight;
+	public FlashlightSettings NormalFlashlightSettings;
+	public FlashlightSettings FocussedFlashlightSettings;
+	public AudioSource NormalFlashlightSound;
+	public AudioSource FocusFlashlightSound;
+	public float FlashlightSettingSmoothing = 1;
+	public Animator FlashlightAnim;
+
 
 	void Start ()
 	{
@@ -33,8 +61,146 @@ public class PlayerController : MonoBehaviour
 	void Update ()
 	{
 		CheckPlayerInput ();
-		CheckCamAnim ();
 		CheckEnemies ();
+		CheckSprint ();
+	}
+
+	void SprintRecover ()
+	{
+		SprintRanOut = false;
+	}
+
+	void CheckSprint ()
+	{
+		var motionBlurSettings = postProcess.motionBlur.settings;
+		float blurFrameBlend = -0.0715f * SprintTimeRemaining + 1;
+		motionBlurSettings.frameBlending = Mathf.Clamp (blurFrameBlend, 0, 1);
+		postProcess.motionBlur.settings = motionBlurSettings;
+
+		var vignetteSettings = postProcess.vignette.settings;
+		float vignetteIntensity = -0.0105f * SprintTimeRemaining + 0.35f;
+		vignetteSettings.intensity = Mathf.Clamp (vignetteIntensity, 0.2f, 1);
+		postProcess.vignette.settings = vignetteSettings;
+
+		// If walking.
+		if (playerActions.Move.Value.magnitude > 0) 
+		{
+			// Is sprinting.
+			if (playerActions.Sprint.IsPressed) 
+			{
+				// Has sprint time.
+				if (SprintTimeRemaining > 0 && SprintRanOut == false) // Punish the player if they have sprint ran out.
+				{
+					WalkState = false;
+					CamAnim.SetBool ("Walking", false);
+					CamAnim.SetBool ("Running", true);
+					SprintTimeRemaining -= Time.deltaTime;
+					FlashlightAnim.SetBool ("FlashlightWalk", false);
+					FlashlightAnim.SetBool ("FlashlightRun", true);
+
+					if (SprintParticles.isPlaying == false) 
+					{
+						SprintParticles.Play ();
+					}
+
+					PlayerCam.fieldOfView = Mathf.Lerp (PlayerCam.fieldOfView, SprintFov, FovSmoothing * Time.deltaTime);
+				} 
+
+				else // Run out of sprinting.
+				
+				{
+					if (SprintRanOut == false) // Punish the player if they have sprint ran out.
+					{
+						Invoke ("SprintRecover", SprintCooldownTime);
+						SprintRanOut = true;
+					}
+
+					WalkState = true;
+					CamAnim.SetBool ("Walking", true);
+					CamAnim.SetBool ("Running", false);
+					SprintTimeRemaining = 0;
+					FlashlightAnim.SetBool ("FlashlightWalk", true);
+					FlashlightAnim.SetBool ("FlashlightRun", false);
+
+					if (SprintParticles.isPlaying == true) 
+					{
+						SprintParticles.Stop (true, ParticleSystemStopBehavior.StopEmitting);
+					}
+
+					PlayerCam.fieldOfView = Mathf.Lerp (PlayerCam.fieldOfView, WalkFov, FovSmoothing * Time.deltaTime);
+				}
+			} 
+
+			else // Not sprinting.
+			
+			{
+				WalkState = true;
+				CamAnim.SetBool ("Walking", true);
+				CamAnim.SetBool ("Running", false);
+				FlashlightAnim.SetBool ("FlashlightWalk", true);
+				FlashlightAnim.SetBool ("FlashlightRun", false);
+
+				if (SprintParticles.isPlaying == true) 
+				{
+					SprintParticles.Stop (true, ParticleSystemStopBehavior.StopEmitting);
+				}
+
+				// Can reover sprint time.
+				if (SprintTimeRemaining < SprintTimeDuration) 
+				{
+					if (SprintRanOut == false) // Punish the player if they have sprint ran out.
+					{
+						SprintTimeRemaining += Time.deltaTime * RecoverMultiplier_Walk;
+					}
+				} 
+
+				else // Fully recovered.
+				{
+					SprintTimeRemaining = SprintTimeDuration;
+				}
+
+				PlayerCam.fieldOfView = Mathf.Lerp (PlayerCam.fieldOfView, WalkFov, FovSmoothing * Time.deltaTime);
+			}
+		} 
+
+		else // Not walking, (Idling).
+		
+		{
+			CamAnim.SetBool ("Walking", false);
+			CamAnim.SetBool ("Running", false);
+			CamAnim.SetTrigger ("Idle");
+			FlashlightAnim.SetBool ("FlashlightWalk", false);
+			FlashlightAnim.SetBool ("FlashlightRun", false);
+			FlashlightAnim.SetTrigger ("FlashlightIdle");
+
+			if (SprintParticles.isPlaying == true) 
+			{
+				SprintParticles.Stop (true, ParticleSystemStopBehavior.StopEmitting);
+			}
+
+			// Can recover sprint time.
+			if (SprintTimeRemaining < SprintTimeDuration) 
+			{
+				if (SprintRanOut == false) // Punish the player if they have sprint ran out.
+				{
+					SprintTimeRemaining += Time.deltaTime * RecoverMultiplier_Idle;
+				}
+			} 
+
+			else // Fully recovered.
+			{
+				SprintTimeRemaining = SprintTimeDuration;
+			}
+
+			PlayerCam.fieldOfView = Mathf.Lerp (PlayerCam.fieldOfView, IdleFov, FovSmoothing * Time.deltaTime);
+		}
+
+		/*
+		if (playerActions.Jump.WasPressed) 
+		{
+			CamAnim.SetTrigger ("Idle");
+		}
+		*/
 	}
 
 	public void TakeDamage (int Damage)
@@ -52,6 +218,12 @@ public class PlayerController : MonoBehaviour
 			{
 				EnemyChecker.enabled = true; // Turn on enemy checker.
 			}
+
+			// Set flashlight settings to focussed.
+			Flashlight.range = Mathf.Lerp (Flashlight.range, FocussedFlashlightSettings.Range, FlashlightSettingSmoothing * Time.deltaTime);
+			Flashlight.spotAngle = Mathf.Lerp (Flashlight.spotAngle, FocussedFlashlightSettings.SpotAngle, FlashlightSettingSmoothing * Time.deltaTime);
+			Flashlight.color = Color.Lerp (Flashlight.color, FocussedFlashlightSettings.color, FlashlightSettingSmoothing * Time.deltaTime);
+			Flashlight.intensity = Mathf.Lerp (Flashlight.intensity, FocussedFlashlightSettings.Intensity, FlashlightSettingSmoothing * Time.deltaTime);
 		} 
 
 		else 
@@ -62,36 +234,22 @@ public class PlayerController : MonoBehaviour
 			{
 				EnemyChecker.enabled = false; // Turn of enemy checker.
 			}
-		}
-	}
 
-	void CheckCamAnim ()
-	{
-		if (playerActions.MoveForward.Value > 0 && playerActions.Sprint.Value <= 0)
-		{
-			CamAnim.SetBool ("Walking", true);
+			// Set flashlight settings to normal.
+			Flashlight.range = Mathf.Lerp (Flashlight.range, NormalFlashlightSettings.Range, FlashlightSettingSmoothing * Time.deltaTime);
+			Flashlight.spotAngle = Mathf.Lerp (Flashlight.spotAngle, NormalFlashlightSettings.SpotAngle, FlashlightSettingSmoothing * Time.deltaTime);
+			Flashlight.color = Color.Lerp (Flashlight.color, NormalFlashlightSettings.color, FlashlightSettingSmoothing * Time.deltaTime);
+			Flashlight.intensity = Mathf.Lerp (Flashlight.intensity, NormalFlashlightSettings.Intensity, FlashlightSettingSmoothing * Time.deltaTime);
 		}
 
-		if (playerActions.MoveForward.Value <= 0)
+		if (playerActions.Flashlight.WasPressed) 
 		{
-			CamAnim.SetBool ("Walking", false);
-			CamAnim.SetTrigger ("Idle");
+			FocusFlashlightSound.Play ();
 		}
 
-		if (playerActions.MoveForward.Value > 0 && playerActions.Sprint.Value > 0)
+		if (playerActions.Flashlight.WasReleased) 
 		{
-			CamAnim.SetBool ("Walking", true);
-			CamAnim.SetBool ("Running", true);
-		}
-
-		if (playerActions.Sprint.Value <= 0) 
-		{
-			CamAnim.SetBool ("Running", false);
-		}
-
-		if (playerActions.Jump.WasPressed) 
-		{
-			CamAnim.SetTrigger ("Idle");
+			NormalFlashlightSound.Play ();
 		}
 	}
 
@@ -103,10 +261,9 @@ public class PlayerController : MonoBehaviour
 		fpsController.m_MouseLook.xRot = playerActions.Look.Value.y * fpsController.m_MouseLook.XSensitivity;
 		fpsController.m_MouseLook.yRot = playerActions.Look.Value.x * fpsController.m_MouseLook.YSensitivity;
 
-		JumpState = playerActions.Jump.WasPressed;
-		fpsController.m_Jump = JumpState;
+		//JumpState = playerActions.Jump.WasPressed;
+		//fpsController.m_Jump = JumpState;
 
-		WalkState = !playerActions.Sprint.IsPressed;
 		fpsController.m_IsWalking = WalkState;
 
 		fpsController.horizontal = MovementX;
@@ -145,8 +302,8 @@ public class PlayerController : MonoBehaviour
 		playerActions.LookDown.AddDefaultBinding (InputControlType.RightStickDown);
 		playerActions.LookDown.AddDefaultBinding (Mouse.NegativeY);
 
-		playerActions.Jump.AddDefaultBinding (Key.Space);
-		playerActions.Jump.AddDefaultBinding (InputControlType.Action1);
+		//playerActions.Jump.AddDefaultBinding (Key.Space);
+		//playerActions.Jump.AddDefaultBinding (InputControlType.Action1);
 
 		playerActions.Sprint.AddDefaultBinding (Key.LeftShift);
 		playerActions.Sprint.AddDefaultBinding (InputControlType.LeftStickButton);

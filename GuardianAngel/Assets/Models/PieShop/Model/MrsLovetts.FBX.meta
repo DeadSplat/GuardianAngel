@@ -1,0 +1,179 @@
+fileFormatVersion: 2
+guid: 3276e1f8914d4434992fa538b64a3da5
+timeCreated: 18446744011573954816
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: BarberSign
+    100002: CourtyardFloor
+    100004: Fence
+    100006: LeftDoorLight
+    100008: LeftDoorLightLamp
+    100010: MrsLovets
+    100012: //RootNode
+    100014: RightDoorLight
+    100016: RightDoorLightLamp
+    100018: Stairs_collider
+    100020: StraightStair001
+    100022: Table001
+    100024: Table002
+    100026: Table003
+    100028: Table004
+    100030: VicBuilding
+    400000: BarberSign
+    400002: CourtyardFloor
+    400004: Fence
+    400006: LeftDoorLight
+    400008: LeftDoorLightLamp
+    400010: MrsLovets
+    400012: //RootNode
+    400014: RightDoorLight
+    400016: RightDoorLightLamp
+    400018: Stairs_collider
+    400020: StraightStair001
+    400022: Table001
+    400024: Table002
+    400026: Table003
+    400028: Table004
+    400030: VicBuilding
+    2300000: BarberSign
+    2300002: CourtyardFloor
+    2300004: Fence
+    2300006: LeftDoorLight
+    2300008: LeftDoorLightLamp
+    2300010: MrsLovets
+    2300012: RightDoorLight
+    2300014: RightDoorLightLamp
+    2300016: Stairs_collider
+    2300018: StraightStair001
+    2300020: Table001
+    2300022: Table002
+    2300024: Table003
+    2300026: Table004
+    2300028: VicBuilding
+    3300000: BarberSign
+    3300002: CourtyardFloor
+    3300004: Fence
+    3300006: LeftDoorLight
+    3300008: LeftDoorLightLamp
+    3300010: MrsLovets
+    3300012: RightDoorLight
+    3300014: RightDoorLightLamp
+    3300016: Stairs_collider
+    3300018: StraightStair001
+    3300020: Table001
+    3300022: Table002
+    3300024: Table003
+    3300026: Table004
+    3300028: VicBuilding
+    4300000: MrsLovets
+    4300002: StraightStair001
+    4300004: Stairs_collider
+    4300006: RightDoorLight
+    4300008: RightDoorLightLamp
+    4300010: LeftDoorLight
+    4300012: LeftDoorLightLamp
+    4300014: Fence
+    4300016: CourtyardFloor
+    4300018: Table004
+    4300020: Table001
+    4300022: Table002
+    4300024: Table003
+    4300026: BarberSign
+    4300028: VicBuilding
+    6400000: BarberSign
+    6400002: CourtyardFloor
+    6400004: Fence
+    6400006: LeftDoorLight
+    6400008: LeftDoorLightLamp
+    6400010: MrsLovets
+    6400012: RightDoorLight
+    6400014: RightDoorLightLamp
+    6400016: Stairs_collider
+    6400018: StraightStair001
+    6400020: Table001
+    6400022: Table002
+    6400024: Table003
+    6400026: Table004
+    6400028: VicBuilding
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.01
+    meshCompression: 0
+    addColliders: 1
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+    normalCalculationMode: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
