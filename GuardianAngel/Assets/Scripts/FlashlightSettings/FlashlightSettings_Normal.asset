@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e0dc9fa4b4983f4998f522a5bf533c9, type: 3}
   m_Name: FlashlightSettings_Normal
   m_EditorClassIdentifier: 
-  Range: 200
+  Range: 100
   SpotAngle: 50
-  color: {r: 1, g: 0.9472617, b: 0.8088235, a: 1}
-  Intensity: 1.5
+  color: {r: 1.0367647, g: 0.9793536, b: 0.8766761, a: 1}
+  Intensity: 1.2

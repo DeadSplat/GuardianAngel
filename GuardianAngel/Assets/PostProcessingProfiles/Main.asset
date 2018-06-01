@@ -81,7 +81,7 @@ MonoBehaviour:
     m_Settings:
       shutterAngle: 360
       sampleCount: 16
-      frameBlending: 0.28448126
+      frameBlending: 0
   eyeAdaptation:
     m_Enabled: 0
     m_Settings:
@@ -121,7 +121,7 @@ MonoBehaviour:
         neutralWhiteClip: 10
       basic:
         postExposure: 0
-        temperature: 0
+        temperature: -3.7
         tint: 1.9
         hueShift: 0
         saturation: 0.956
@@ -134,9 +134,9 @@ MonoBehaviour:
       colorWheels:
         mode: 1
         log:
-          slope: {r: 0.94108325, g: 0.9620378, b: 1, a: 0}
-          power: {r: 0.9806025, g: 0.9794251, b: 1, a: 0.1813602}
-          offset: {r: 1, g: 0.9907981, b: 0.99079806, a: 0}
+          slope: {r: 0.87620926, g: 0.9009406, b: 1, a: 0}
+          power: {r: 0.9631893, g: 0.9440307, b: 1, a: 0.1813602}
+          offset: {r: 0.8876839, g: 0.8970282, b: 1, a: 0}
         linear:
           lift: {r: 1, g: 1, b: 1, a: 0}
           gamma: {r: 1, g: 1, b: 1, a: 0}
@@ -298,7 +298,7 @@ MonoBehaviour:
       mode: 0
       color: {r: 0, g: 0, b: 0, a: 1}
       center: {x: 0.5, y: 0.5}
-      intensity: 0.24492382
+      intensity: 0
       smoothness: 1
       roundness: 1
       mask: {fileID: 0}

@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
 	[Range (-1, 1)]
 	public float MovementY;
 	public bool WalkState;
+	private float initalRunSpeed;
 	//public bool JumpState;
 
 	[Header ("Sprint")]
@@ -56,6 +57,7 @@ public class PlayerController : MonoBehaviour
 	{
 		CreatePlayerActions ();
 		CurrentHealth = StartingHealth;
+		initalRunSpeed = fpsController.m_RunSpeed;
 	}
 
 	void Update ()
@@ -63,6 +65,34 @@ public class PlayerController : MonoBehaviour
 		CheckPlayerInput ();
 		CheckEnemies ();
 		CheckSprint ();
+		CheckUse ();
+	}
+
+	void CheckUse ()
+	{
+		// Executes once when player pressed use key.
+		if (playerActions.Use.WasPressed) 
+		{
+			RaycastHit hit;
+			Ray ray = PlayerCam.ScreenPointToRay (Input.mousePosition);
+
+			if (Physics.Raycast (ray, out hit)) 
+			{
+				Transform objectHit = hit.transform;
+
+				if (hit.collider.tag == "Switch")
+				{
+					Debug.Log ("Activated a switch.");
+
+				}
+					
+				if (hit.collider.tag == "Flashlight") 
+				{
+					Debug.Log ("Used/picked up flashlight.");
+
+				}
+			}
+		}
 	}
 
 	void SprintRecover ()
@@ -73,12 +103,12 @@ public class PlayerController : MonoBehaviour
 	void CheckSprint ()
 	{
 		var motionBlurSettings = postProcess.motionBlur.settings;
-		float blurFrameBlend = -0.0715f * SprintTimeRemaining + 1;
+		float blurFrameBlend = -0.2f * SprintTimeRemaining + 1;
 		motionBlurSettings.frameBlending = Mathf.Clamp (blurFrameBlend, 0, 1);
 		postProcess.motionBlur.settings = motionBlurSettings;
 
 		var vignetteSettings = postProcess.vignette.settings;
-		float vignetteIntensity = -0.0105f * SprintTimeRemaining + 0.35f;
+		float vignetteIntensity = -0.2f * SprintTimeRemaining + 0.35f;
 		vignetteSettings.intensity = Mathf.Clamp (vignetteIntensity, 0.2f, 1);
 		postProcess.vignette.settings = vignetteSettings;
 
@@ -104,6 +134,17 @@ public class PlayerController : MonoBehaviour
 					}
 
 					PlayerCam.fieldOfView = Mathf.Lerp (PlayerCam.fieldOfView, SprintFov, FovSmoothing * Time.deltaTime);
+
+					// Allow faster sprint with special key.
+					if (Input.GetKeyDown (KeyCode.C)) 
+					{
+						fpsController.m_RunSpeed *= 5;
+					}
+
+					if (Input.GetKeyUp (KeyCode.C)) 
+					{
+						fpsController.m_RunSpeed = initalRunSpeed;
+					}
 				} 
 
 				else // Run out of sprinting.
@@ -193,6 +234,7 @@ public class PlayerController : MonoBehaviour
 			}
 
 			PlayerCam.fieldOfView = Mathf.Lerp (PlayerCam.fieldOfView, IdleFov, FovSmoothing * Time.deltaTime);
+			fpsController.m_RunSpeed = initalRunSpeed;
 		}
 
 		/*
