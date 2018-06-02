@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
-using UnityStandardAssets.Characters.FirstPerson;
+using UnityEngine.SceneManagement;
 using UnityEngine.PostProcessing;
+using UnityStandardAssets.Characters.FirstPerson;
 using InControl;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
+	public SaveAndLoadScript saveLoadScript;
+	public LocalSceneLoader localSceneLoaderScript;
 	public PostProcessingProfile postProcess;
 
 	[Header ("Input")]
@@ -37,6 +41,14 @@ public class PlayerController : MonoBehaviour
 	public float SprintFov = 65;
 	public float FovSmoothing = 60;
 
+	[Header ("UI Actions")]
+	public Animator UIActionAnim;
+	public TextMeshProUGUI ActionText;
+	public Animator UIDescriptionAnim;
+	public TextMeshProUGUI DescriptionText;
+	public Animator UIObjectiveAnim;
+	public TextMeshProUGUI ObjectiveText;
+
 	[Header ("EnemyDetection")]
 	public Collider EnemyChecker;
 
@@ -52,9 +64,11 @@ public class PlayerController : MonoBehaviour
 	public float FlashlightSettingSmoothing = 1;
 	public Animator FlashlightAnim;
 
-
 	void Start ()
 	{
+		saveLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
+		saveLoadScript.playerControllerScript_P1 = this;
+		saveLoadScript.cam = PlayerCam;
 		CreatePlayerActions ();
 		CurrentHealth = StartingHealth;
 		initalRunSpeed = fpsController.m_RunSpeed;
@@ -66,6 +80,65 @@ public class PlayerController : MonoBehaviour
 		CheckEnemies ();
 		CheckSprint ();
 		CheckUse ();
+		CheckActionMenu ();
+		CheckRestart ();
+	}
+
+	void CheckRestart ()
+	{
+		if (Input.GetKeyDown (KeyCode.R)) 
+		{
+			if (localSceneLoaderScript.SceneLoadCommit == false) 
+			{
+				localSceneLoaderScript.LoadScene (SceneManager.GetActiveScene ().name);
+				localSceneLoaderScript.SceneLoadCommit = true;
+			}
+		}
+	}
+
+	void CheckActionMenu ()
+	{
+		RaycastHit hit;
+		Ray ray = PlayerCam.ScreenPointToRay (Input.mousePosition);
+
+		if (Physics.Raycast (ray, out hit, 2f)) 
+		{
+			Transform objectHit = hit.transform;
+
+			if (objectHit.tag == "Switch")
+			{
+				SwitchScript switchScript = objectHit.GetComponent<SwitchScript> ();
+
+				if (switchScript.activated == false)
+				{
+					if (UIDescriptionAnim.GetBool ("Visible") == false) 
+					{
+						UIDescriptionAnim.SetBool ("Visible", true);
+					}
+
+					if (UIActionAnim.GetBool ("Visible") == false) 
+					{
+						UIActionAnim.SetBool ("Visible", true);
+					}
+
+					DescriptionText.text = switchScript.Name;
+					ActionText.text = "E / F";
+				}
+			}
+		}
+
+		else // Did not find anything to raycast on.
+		{
+			if (UIDescriptionAnim.GetBool ("Visible") == true) 
+			{
+				UIDescriptionAnim.SetBool ("Visible", false);
+			}
+
+			if (UIActionAnim.GetBool ("Visible") == true) 
+			{
+				UIActionAnim.SetBool ("Visible", false);
+			}
+		}
 	}
 
 	void CheckUse ()
@@ -76,22 +149,30 @@ public class PlayerController : MonoBehaviour
 			RaycastHit hit;
 			Ray ray = PlayerCam.ScreenPointToRay (Input.mousePosition);
 
-			if (Physics.Raycast (ray, out hit)) 
+			if (Physics.Raycast (ray, out hit, 2f)) 
 			{
 				Transform objectHit = hit.transform;
 
-				if (hit.collider.tag == "Switch")
+				if (objectHit.tag == "Switch")
 				{
-					Debug.Log ("Activated a switch.");
+					SwitchScript switchScript = objectHit.GetComponent<SwitchScript> ();
 
+					if (switchScript.activated == false) 
+					{
+						switchScript.ActivateSwitch ();
+					}
+
+					Debug.Log ("Activated a switch."); 
 				}
 					
-				if (hit.collider.tag == "Flashlight") 
+				if (objectHit.tag == "Flashlight") 
 				{
 					Debug.Log ("Used/picked up flashlight.");
 
 				}
 			}
+
+			return;
 		}
 	}
 

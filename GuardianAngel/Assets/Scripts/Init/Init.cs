@@ -15,10 +15,10 @@ public class Init : MonoBehaviour
 	{
 		// If there are no MANAGERS GameObject present,
 		// Create one and make it not destroy on load.
-		if (GameObject.Find ("MANAGERS") == null)
+		if (GameObject.Find ("_MANAGERS") == null)
 		{
 			GameObject managers = Instantiate (ManagersPrefab, Vector3.zero, Quaternion.identity);
-			managers.name = "MANAGERS";
+			managers.name = "_MANAGERS";
 			DontDestroyOnLoad (managers.gameObject);
 		}
 	}
