@@ -5,22 +5,22 @@ public class Enemy : MonoBehaviour
 	public PlayerController playerControllerScript;
 	public Transform Player;
 	public Camera PlayerCam;
-	public bool onScreen;
-	public MeshRenderer AttackMesh;
-	public float MovementSpeed = 1;
-	public float BufferDistance;
 
+	[Header ("Attacking")]
+	public MeshRenderer AttackMesh;
 	public GameObject AttackingPose;
 	public GameObject DefendingPose;
-
-	public Collider EnemyChecker;
-
 	public bool isDefending;
 	public float DefendingTimerRemain;
 	public float DefendingTimerDuration;
 
 	public Collider AngelAttackCol;
+	public Collider EnemyChecker;
 
+	[Header ("Movement")]
+	public bool onScreen;
+	public float MovementSpeed = 1;
+	public float BufferDistance;
 	[Tooltip ("Current fluid movement for Angels when facing away from them.")]
 	public float AttackSpeed = 0.5f;
 	[Tooltip ("Current teleporting movement for Angels when facing towards them.")]
@@ -31,7 +31,14 @@ public class Enemy : MonoBehaviour
 
 	public int Damage = 2;
 
-
+	[Header ("Jump scares")]
+	public Transform OnScreenChecker;
+	public Collider JumpScareVisibleTrigger;
+	public AudioSource JumpScareInvisible;
+	public AudioClip[] JumpScaresInvisibleClips;
+	[Space (10)]
+	public AudioSource JumpScareVisible;
+	public AudioClip[] JumpScaresVisibleClips;
 
 	void Start () 
 	{
@@ -74,11 +81,12 @@ public class Enemy : MonoBehaviour
 					if (Vector3.Distance (Player.transform.position, transform.position) > BufferDistance) 
 					{
 						// Do some teleport movement.
-						transform.position = Vector3.MoveTowards (
-							transform.position, 
-							Player.transform.position,
-							TeleportAttackSpeed * Time.deltaTime
-						);
+						transform.position = 
+							Vector3.MoveTowards (
+								transform.position, 
+								Player.transform.position,
+								TeleportAttackSpeed * Time.deltaTime
+							);
 
 						transform.LookAt (Player.transform);
 					}
@@ -101,6 +109,16 @@ public class Enemy : MonoBehaviour
 		{
 			AngelAttackCol.enabled = !AngelAttackCol.enabled;
 			playerControllerScript.TakeDamage (Damage);
+
+			// Off screen jump scare.
+			if (onScreen == false) 
+			{
+				if (JumpScareInvisible.isPlaying == false)
+				{
+					JumpScareInvisible.clip = JumpScaresInvisibleClips [Random.Range (0, JumpScaresInvisibleClips.Length)];
+					JumpScareInvisible.Play ();
+				}
+			}
 		}
 	}
 
@@ -109,11 +127,11 @@ public class Enemy : MonoBehaviour
 		if (AttackingPose.activeSelf == true)
 		{
 			// Get screenpoint in viewport space by camera.
-			Vector3 screenPoint = PlayerCam.WorldToViewportPoint (transform.position);
+			Vector3 screenPoint = PlayerCam.WorldToViewportPoint (OnScreenChecker.position);
 
 			// Check is on screen by normalised points.
 			onScreen = 
-				screenPoint.z > 0 &&
+				screenPoint.z > -1 &&
 				screenPoint.x > 0 &&
 				screenPoint.x < 1 &&
 				screenPoint.y > 0 &&
@@ -132,7 +150,7 @@ public class Enemy : MonoBehaviour
 						Player.transform.position,
 						MovementSpeed * Time.deltaTime
 					);
-						
+
 					transform.LookAt (Player.transform);
 				}
 
@@ -172,6 +190,18 @@ public class Enemy : MonoBehaviour
 			DefendingPose.SetActive (true);
 			isDefending = true;
 			DefendingTimerRemain = DefendingTimerDuration;  // Reset defendng timer.
+		}
+
+		if (other == JumpScareVisibleTrigger) 
+		{
+			if (onScreen == true) 
+			{
+				if (JumpScareVisible.isPlaying == false)
+				{
+					JumpScareVisible.clip = JumpScaresVisibleClips [Random.Range (0, JumpScaresVisibleClips.Length)];
+					JumpScareVisible.Play ();
+				}
+			}
 		}
 	}
 
