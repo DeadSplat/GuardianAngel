@@ -21,7 +21,6 @@ public class PlayerController : MonoBehaviour
 	public float MovementY;
 	public bool WalkState;
 	private float initalRunSpeed;
-	//public bool JumpState;
 
 	[Header ("Sprint")]
 	public float SprintTimeRemaining = 28;
@@ -32,6 +31,10 @@ public class PlayerController : MonoBehaviour
 
 	public bool SprintRanOut;
 	public float SprintCooldownTime = 5;
+
+	public bool isJumpScared;
+	public AudioSource HeartBeatSound;
+	public AudioSource BreathingSound;
 
 	[Header ("Camera")]
 	public Camera PlayerCam;
@@ -69,6 +72,7 @@ public class PlayerController : MonoBehaviour
 		saveLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
 		saveLoadScript.playerControllerScript_P1 = this;
 		saveLoadScript.cam = PlayerCam;
+		saveLoadScript.VisualSettingsComponent = saveLoadScript.cam.GetComponent <PostProcessingBehaviour> ();
 		CreatePlayerActions ();
 		CurrentHealth = StartingHealth;
 		initalRunSpeed = fpsController.m_RunSpeed;
@@ -82,10 +86,47 @@ public class PlayerController : MonoBehaviour
 		CheckUse ();
 		CheckActionMenu ();
 		CheckRestart ();
+		CheckHeartBeatAndBreathing ();
+	}
+
+	void CheckHeartBeatAndBreathing ()
+	{
+		float BreathingPitch = -0.005f * SprintTimeRemaining + 1.02f;
+		BreathingSound.pitch = BreathingPitch;
+
+		float BreathingVolume = -0.01f * SprintTimeRemaining + 0.2f;
+		BreathingSound.volume = BreathingVolume;
+
+		if (isJumpScared == false) 
+		{
+			float HeartBeatPitch = -0.082f * SprintTimeRemaining + 2.5f;
+			HeartBeatSound.pitch = Mathf.Lerp (HeartBeatSound.pitch, HeartBeatPitch, Time.deltaTime);
+
+			float HeartBeatVolume = -0.0321f * SprintTimeRemaining + 0.9f;
+			HeartBeatSound.volume = Mathf.Lerp (HeartBeatSound.volume, HeartBeatVolume, Time.deltaTime);
+		} 
+
+		else
+
+		{
+			HeartBeatSound.pitch = Mathf.Lerp (HeartBeatSound.pitch, 2.5f, Time.deltaTime);
+			HeartBeatSound.volume = Mathf.Lerp (HeartBeatSound.volume, 0.9f, Time.deltaTime);
+		}
+	}
+
+	void SetRecoverJumpScareTimer (float RecoverDelay)
+	{
+		Invoke ("RecoverJumpscare", RecoverDelay);
+	}
+
+	void RecoverDelay ()
+	{
+		isJumpScared = false;
 	}
 
 	void CheckRestart ()
 	{
+		#if UNITY_EDITOR
 		if (Input.GetKeyDown (KeyCode.R)) 
 		{
 			if (localSceneLoaderScript.SceneLoadCommit == false) 
@@ -94,6 +135,7 @@ public class PlayerController : MonoBehaviour
 				localSceneLoaderScript.SceneLoadCommit = true;
 			}
 		}
+		#endif
 	}
 
 	void CheckActionMenu ()
@@ -216,6 +258,7 @@ public class PlayerController : MonoBehaviour
 
 					PlayerCam.fieldOfView = Mathf.Lerp (PlayerCam.fieldOfView, SprintFov, FovSmoothing * Time.deltaTime);
 
+					#if UNITY_EDITOR
 					// Allow faster sprint with special key.
 					if (Input.GetKeyDown (KeyCode.C)) 
 					{
@@ -226,6 +269,7 @@ public class PlayerController : MonoBehaviour
 					{
 						fpsController.m_RunSpeed = initalRunSpeed;
 					}
+					#endif
 				} 
 
 				else // Run out of sprinting.
@@ -317,13 +361,6 @@ public class PlayerController : MonoBehaviour
 			PlayerCam.fieldOfView = Mathf.Lerp (PlayerCam.fieldOfView, IdleFov, FovSmoothing * Time.deltaTime);
 			fpsController.m_RunSpeed = initalRunSpeed;
 		}
-
-		/*
-		if (playerActions.Jump.WasPressed) 
-		{
-			CamAnim.SetTrigger ("Idle");
-		}
-		*/
 	}
 
 	public void TakeDamage (int Damage)
@@ -384,9 +421,6 @@ public class PlayerController : MonoBehaviour
 		fpsController.m_MouseLook.xRot = playerActions.Look.Value.y * fpsController.m_MouseLook.XSensitivity;
 		fpsController.m_MouseLook.yRot = playerActions.Look.Value.x * fpsController.m_MouseLook.YSensitivity;
 
-		//JumpState = playerActions.Jump.WasPressed;
-		//fpsController.m_Jump = JumpState;
-
 		fpsController.m_IsWalking = WalkState;
 
 		fpsController.horizontal = MovementX;
@@ -424,9 +458,6 @@ public class PlayerController : MonoBehaviour
 
 		playerActions.LookDown.AddDefaultBinding (InputControlType.RightStickDown);
 		playerActions.LookDown.AddDefaultBinding (Mouse.NegativeY);
-
-		//playerActions.Jump.AddDefaultBinding (Key.Space);
-		//playerActions.Jump.AddDefaultBinding (InputControlType.Action1);
 
 		playerActions.Sprint.AddDefaultBinding (Key.LeftShift);
 		playerActions.Sprint.AddDefaultBinding (InputControlType.LeftStickButton);

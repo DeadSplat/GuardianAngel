@@ -4,6 +4,8 @@ public class SwitchScript : MonoBehaviour
 {
 	public PlayerController playerControllerScript;
 	public GameController gameControllerScript;
+	public WeatherSystem weatherSystem;
+
 	public Animator SwitchAnim;
 	public Light[] RedLights;
 	public Light[] GreenLights;
@@ -14,6 +16,8 @@ public class SwitchScript : MonoBehaviour
 
 	public string Name = "Power box";
 	public LineRenderer line;
+
+	public bool isMasterSwitch;
 
 	void Start ()
 	{	
@@ -26,7 +30,6 @@ public class SwitchScript : MonoBehaviour
 	{
 		SwitchAnim.SetTrigger ("ActivateSwitch");
 		SwitchMoveSound.Play ();
-		gameControllerScript.SwitchesActivated++;
 		activated = true;
 	}
 
@@ -37,10 +40,24 @@ public class SwitchScript : MonoBehaviour
 		ToggleGreenLights (true);
 		SwitchActivateSound.Play ();
 		SwitchActivateParticles.Play ();
-		SetLineToRadioTower ();
-		gameControllerScript.UpdateBackgroundAmbience ();
-		gameControllerScript.RefreshSwitchesLines ();
-		SetObjectiveText (gameControllerScript.SwitchesActivated + "/" + gameControllerScript.MaxiumSwitchesToActivate);
+
+		if (isMasterSwitch == false)
+		{
+			gameControllerScript.SwitchesActivated++;
+			SetObjectiveText (gameControllerScript.SwitchesActivated + "/" + gameControllerScript.MaximumSwitchesToActivate);
+			SetLineToRadioTower ();
+			gameControllerScript.RefreshSwitchesLines ();
+			gameControllerScript.UpdateBackgroundAmbience ();
+			weatherSystem.UpdateRainEmission ();
+		}
+
+		else 
+		
+		{
+			SetObjectiveText ("Activate " + gameControllerScript.MaximumSwitchesToActivate + " switches");
+			gameControllerScript.SetSwitchState (true);
+			gameControllerScript.MasterAmbience.Play ();
+		}
 	}
 
 	void ToggleGreenLights (bool active)
@@ -70,7 +87,7 @@ public class SwitchScript : MonoBehaviour
 	{
 		playerControllerScript.UIObjectiveAnim.SetTrigger ("Objective");
 
-		if (gameControllerScript.SwitchesActivated < gameControllerScript.MaxiumSwitchesToActivate)
+		if (gameControllerScript.SwitchesActivated < gameControllerScript.MaximumSwitchesToActivate)
 		{
 			playerControllerScript.ObjectiveText.text = Objective;
 		} 

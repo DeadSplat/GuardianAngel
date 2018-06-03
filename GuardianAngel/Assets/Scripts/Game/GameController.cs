@@ -9,12 +9,14 @@ public class GameController : MonoBehaviour
 	public Terrain terrain;
 
 	public int SwitchesActivated;
-	public int MaxiumSwitchesToActivate = 6;
+	public int MaximumSwitchesToActivate = 6;
 	public Transform RadioTowerLink;
 
 	[Header ("Switches")]
+	public GameObject[] SwitchObjects;
 	public SwitchScript[] Switches;
 	public Gradient endGradient;
+	public AudioSource MasterAmbience;
 
 	[Header ("On all awitches activated")]
 	public Collider CellarDoorTrigger;
@@ -36,14 +38,20 @@ public class GameController : MonoBehaviour
 		saveLoadScript.gameControllerScript = this;
 		saveLoadScript.LoadPlayerData ();
 		saveLoadScript.LoadSettingsData ();
+
 		AudioListener.volume = saveLoadScript.MasterVolume;
+
 		BackgroundAmbience [0].Play ();
+
 		CellarDoorTrigger.enabled = false;
 		CellarDoorsClosed.SetActive (true);
 		CellarDoorsOpened.SetActive (false);
 
 		isCountingTime = true; // Set this to false when we have a cutscene ready.
 		InvokeRepeating ("LevelTimer", 0, 1);
+
+		SetSwitchState (false);
+		Debug.Log ("Turned off switches.");
 	}
 
 	public void UpdateBackgroundAmbience ()
@@ -53,7 +61,7 @@ public class GameController : MonoBehaviour
 
 	public void RefreshSwitchesLines ()
 	{
-		if (SwitchesActivated == MaxiumSwitchesToActivate) 
+		if (SwitchesActivated == MaximumSwitchesToActivate) 
 		{
 			for (int i = 0; i < Switches.Length; i++) 
 			{
@@ -86,5 +94,13 @@ public class GameController : MonoBehaviour
 	{
 		string thisLevelTime = Mathf.Floor ((LevelTimerElapsed / 60)) + ":" + ((LevelTimerElapsed % 60).ToString ("00"));
 		LevelTimerEndText.text = thisLevelTime;
+	}
+
+	public void SetSwitchState (bool switchIsInteractable)
+	{
+		foreach (GameObject switchObject in SwitchObjects) 
+		{
+			switchObject.SetActive (switchIsInteractable);
+		}
 	}
 }
