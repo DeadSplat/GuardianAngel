@@ -85,8 +85,11 @@ public class PlayerController : MonoBehaviour
 		CheckSprint ();
 		CheckUse ();
 		CheckActionMenu ();
-		CheckRestart ();
 		CheckHeartBeatAndBreathing ();
+
+		#if UNITY_EDITOR
+		CheckRestart ();
+		#endif
 	}
 
 	void CheckHeartBeatAndBreathing ()
@@ -114,6 +117,7 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
+	// Called when enemy jumpscares player from behind.
 	void SetRecoverJumpScareTimer (float RecoverDelay)
 	{
 		Invoke ("RecoverJumpscare", RecoverDelay);
@@ -126,7 +130,6 @@ public class PlayerController : MonoBehaviour
 
 	void CheckRestart ()
 	{
-		#if UNITY_EDITOR
 		if (Input.GetKeyDown (KeyCode.R)) 
 		{
 			if (localSceneLoaderScript.SceneLoadCommit == false) 
@@ -135,7 +138,6 @@ public class PlayerController : MonoBehaviour
 				localSceneLoaderScript.SceneLoadCommit = true;
 			}
 		}
-		#endif
 	}
 
 	void CheckActionMenu ()
