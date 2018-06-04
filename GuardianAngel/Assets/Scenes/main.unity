@@ -12197,7 +12197,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 985751748
+  randomSeed: -1643134764
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -18988,7 +18988,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1665066326
+  randomSeed: 141939670
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -27380,7 +27380,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: caf5c2ee85f28ef40a2a240de5da1fe9, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.25
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -33997,7 +33997,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 1689714340
+  randomSeed: -264850639
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -52986,7 +52986,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 22524585eb71d574da6a2d2a0d47821c, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.25
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
