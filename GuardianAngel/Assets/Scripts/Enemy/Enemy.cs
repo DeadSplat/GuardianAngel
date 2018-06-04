@@ -28,6 +28,7 @@ public class Enemy : MonoBehaviour
 
 	public float TeleportTimeDuration;
 	public float TeleportTimeRemaining;
+	public AudioSource TeleportSound;
 
 	public int Damage = 2;
 
@@ -73,7 +74,6 @@ public class Enemy : MonoBehaviour
 
 				// Calculate next teleport duration.
 				TeleportTimeDuration = Random.Range (0.1f, 0.75f);
-
 				TeleportTimeRemaining = TeleportTimeDuration;
 
 				// If is seen by the camera.
@@ -90,6 +90,7 @@ public class Enemy : MonoBehaviour
 							);
 
 						transform.LookAt (Player.transform);
+						TeleportSound.Play ();
 					}
 
 					if (Vector3.Distance (Player.transform.position, transform.position) <= 0.1f) 
