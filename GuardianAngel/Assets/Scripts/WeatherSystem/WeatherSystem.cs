@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityStandardAssets.Utility;
 
 public class WeatherSystem : MonoBehaviour 
 {
@@ -19,6 +20,10 @@ public class WeatherSystem : MonoBehaviour
 	public ParticleSystem Rain;
 	public AudioSource RainLoop;
 
+	[Header ("Sun")]
+	public Light Sun;
+	public AutoMoveAndRotate SunAutoRotateScript;
+
 	void Start ()
 	{
 		ResetLightningTime ();
@@ -26,6 +31,26 @@ public class WeatherSystem : MonoBehaviour
 	}
 
 	void Update ()
+	{
+		CheckSun ();
+		CheckLightning ();
+	}
+
+	void CheckSun ()
+	{
+		if (Sun.transform.eulerAngles.x > 180) 
+		{
+			Sun.intensity = Mathf.Lerp (Sun.intensity, 0, 0.1f * Time.deltaTime);
+		}
+
+		if (Sun.intensity < 0.02f) 
+		{
+			SunAutoRotateScript.enabled = false;
+			Sun.enabled = false;
+		}
+	}
+
+	void CheckLightning ()
 	{
 		if (NewLightningTime > 0) 
 		{
@@ -36,13 +61,11 @@ public class WeatherSystem : MonoBehaviour
 		} 
 
 		else 
-		
+
 		{
 			DoLightning ();
 			ResetLightningTime ();
 		}
-
-
 	}
 
 	public void DoLightning ()

@@ -32,6 +32,7 @@ public class Enemy : MonoBehaviour
 	public int Damage = 2;
 
 	[Header ("Jump scares")]
+	public Animator JumpScareCam;
 	public Transform OnScreenChecker;
 	public Collider JumpScareVisibleTrigger;
 	public AudioSource JumpScareInvisible;
@@ -117,6 +118,7 @@ public class Enemy : MonoBehaviour
 				{
 					JumpScareInvisible.clip = JumpScaresInvisibleClips [Random.Range (0, JumpScaresInvisibleClips.Length)];
 					JumpScareInvisible.Play ();
+					JumpScareCam.SetTrigger ("Jumpscare");
 				}
 			}
 		}

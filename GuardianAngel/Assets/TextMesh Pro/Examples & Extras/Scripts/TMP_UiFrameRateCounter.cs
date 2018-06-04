@@ -7,6 +7,8 @@ namespace TMPro.Examples
     
     public class TMP_UiFrameRateCounter : MonoBehaviour
     {
+		private SaveAndLoadScript saveAndLoadScript;
+
         public float UpdateInterval = 5.0f;
         private float m_LastInterval = 0;
         private int m_Frames = 0;
@@ -23,12 +25,18 @@ namespace TMPro.Examples
 
         private FpsCounterAnchorPositions last_AnchorPosition;
 
+		public float fps;
+		public float ms;
+
+		private float avgfps;
+		public float averageFramerate;
+
         void Awake()
         {
             if (!enabled)
                 return;
 
-            Application.targetFrameRate = 120;
+            //Application.targetFrameRate = 120;
 
             GameObject frameCounter = new GameObject("Frame Counter");
             m_frameCounter_transform = frameCounter.AddComponent<RectTransform>();
@@ -53,11 +61,27 @@ namespace TMPro.Examples
         {
             m_LastInterval = Time.realtimeSinceStartup;
             m_Frames = 0;
+			avgfps = 60;
+			averageFramerate = 60;
+
+			if (saveAndLoadScript == null) 
+			{
+				saveAndLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
+				saveAndLoadScript.framerateScript = this;
+			}
         }
+
+		void UpdateAverageFramerate ()
+		{
+			avgfps += ((Time.deltaTime / Time.timeScale) - avgfps) * Time.deltaTime;
+			averageFramerate = 1 / avgfps;
+		}
 
 
         void Update()
         {
+			UpdateAverageFramerate ();
+
             if (AnchorPosition != last_AnchorPosition)
                 Set_FrameCounter_Position(AnchorPosition);
 
@@ -69,8 +93,8 @@ namespace TMPro.Examples
             if (timeNow > m_LastInterval + UpdateInterval)
             {
                 // display two fractional digits (f2 format)
-                float fps = m_Frames / (timeNow - m_LastInterval);
-                float ms = 1000.0f / Mathf.Max(fps, 0.00001f);
+                fps = m_Frames / (timeNow - m_LastInterval);
+                ms = 1000.0f / Mathf.Max(fps, 0.00001f);
 
                 if (fps < 30)
                     htmlColorTag = "<color=yellow>";

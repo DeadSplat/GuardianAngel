@@ -9,6 +9,8 @@ using UnityEngine.PostProcessing;
 
 using UnityStandardAssets.ImageEffects;
 
+using TMPro.Examples;
+
 public class SaveAndLoadScript : MonoBehaviour 
 {
 	public PlayerController playerControllerScript_P1;
@@ -25,6 +27,9 @@ public class SaveAndLoadScript : MonoBehaviour
 	public PostProcessingProfile VisualSettings;
 	public PostProcessingBehaviour VisualSettingsComponent;
 	public Camera cam;
+
+	public TMP_UiFrameRateCounter framerateScript;
+	public float LowFpsTime;
 
 	[Space (10)]
 	public int QualitySettingsIndex;
@@ -60,6 +65,43 @@ public class SaveAndLoadScript : MonoBehaviour
 				LoadSettingsData ();
 
 				CheckUsername ();
+			}
+		}
+
+		//Application.targetFrameRate = 20;
+	}
+
+	void FixedUpdate ()
+	{
+		if (framerateScript != null) 
+		{
+			if (framerateScript.averageFramerate < 30) 
+			{
+				LowFpsTime += Time.fixedDeltaTime;
+
+				if (LowFpsTime > 10) 
+				{
+					QualitySettingsIndex = 0;
+					Application.targetFrameRate = -1;
+
+					if (Screen.width > 1366 || Screen.height < 768) 
+					{
+						Screen.SetResolution (1366, 768, Screen.fullScreen);
+					}
+
+					SaveSettingsData ();
+					LoadSettingsData ();
+					Debug.Log ("Lowered quality settings because of low average framerate.");
+				}
+			} 
+
+			else 
+			
+			{
+				if (LowFpsTime != 0) 
+				{
+					LowFpsTime = 0;
+				}
 			}
 		}
 	}

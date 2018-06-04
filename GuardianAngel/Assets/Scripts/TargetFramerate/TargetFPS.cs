@@ -6,6 +6,6 @@ public class TargetFPS : MonoBehaviour
 
 	void Start ()
 	{
-		Application.targetFrameRate = targetFrameRate;
+		//Application.targetFrameRate = targetFrameRate;
 	}
 }

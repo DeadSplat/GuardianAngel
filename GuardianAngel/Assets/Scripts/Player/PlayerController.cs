@@ -55,8 +55,13 @@ public class PlayerController : MonoBehaviour
 	[Header ("EnemyDetection")]
 	public Collider EnemyChecker;
 
+	[Header ("Health")]
 	public int CurrentHealth;
 	public int StartingHealth = 100;
+	public ParticleSystem HealthParticleBurst;
+	public ParticleSystem HealthAmountParticles;
+
+	public int HealthRegenRate;
 
 	[Header ("Flashlight Settings")]
 	public Light Flashlight;
@@ -67,6 +72,10 @@ public class PlayerController : MonoBehaviour
 	public float FlashlightSettingSmoothing = 1;
 	public Animator FlashlightAnim;
 
+	[Header ("Misc")]
+	public Transform DonateBox;
+	public string donateBoxUrlName = "https://spalato-bros.itch.io/guardian-angel";
+
 	void Start ()
 	{
 		saveLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
@@ -76,6 +85,7 @@ public class PlayerController : MonoBehaviour
 		CreatePlayerActions ();
 		CurrentHealth = StartingHealth;
 		initalRunSpeed = fpsController.m_RunSpeed;
+		InvokeRepeating ("CheckRegenHealth", 0, 1);
 	}
 
 	void Update ()
@@ -86,10 +96,25 @@ public class PlayerController : MonoBehaviour
 		CheckUse ();
 		CheckActionMenu ();
 		CheckHeartBeatAndBreathing ();
+		UpdateHealthParticles ();
 
 		#if UNITY_EDITOR
 		CheckRestart ();
 		#endif
+	}
+
+	void CheckRegenHealth ()
+	{
+		if (CurrentHealth < StartingHealth && isJumpScared == false) 
+		{
+			CurrentHealth += HealthRegenRate;
+		}
+	}
+
+	void UpdateHealthParticles ()
+	{
+		var HealthParticleEmissionAmount = HealthAmountParticles.emission;
+		HealthParticleEmissionAmount.rateOverTime = -0.8f * CurrentHealth + 80;
 	}
 
 	void CheckHeartBeatAndBreathing ()
@@ -123,7 +148,7 @@ public class PlayerController : MonoBehaviour
 		Invoke ("RecoverJumpscare", RecoverDelay);
 	}
 
-	void RecoverDelay ()
+	void RecoverJumpscare ()
 	{
 		isJumpScared = false;
 	}
@@ -367,7 +392,24 @@ public class PlayerController : MonoBehaviour
 
 	public void TakeDamage (int Damage)
 	{
-		CurrentHealth -= Damage;
+		HealthParticleBurst.Play ();
+
+		if (CurrentHealth > 0) 
+		{
+			CurrentHealth -= Damage;
+		} 
+
+		else
+		
+		{
+			CurrentHealth = 0;
+		}
+			
+		if (IsInvoking ("RecoverJumpscare") == false) 
+		{
+			SetRecoverJumpScareTimer (3);
+			isJumpScared = true;
+		}
 	}
 
 	void CheckEnemies ()
@@ -407,6 +449,19 @@ public class PlayerController : MonoBehaviour
 		if (playerActions.Flashlight.WasPressed) 
 		{
 			FocusFlashlightSound.Play ();
+
+			RaycastHit hit;
+			Ray ray = PlayerCam.ScreenPointToRay (Input.mousePosition);
+
+			if (Physics.Raycast (ray, out hit, 2f))
+			{
+				Transform objectHit = hit.transform;
+
+				if (objectHit == DonateBox) 
+				{
+					DonateBox.GetComponent <OpenUrlOnPress> ().OpenUrl (donateBoxUrlName);
+				}
+			}
 		}
 
 		if (playerActions.Flashlight.WasReleased) 
