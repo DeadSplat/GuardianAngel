@@ -19,6 +19,7 @@ namespace TMPro.Examples
 
         private string htmlColorTag;
         private const string fpsLabel = "{0:2}</color> FPS \n{1:2} <#8080ff>MS";
+		public bool isVisible;
 
         private TextMeshProUGUI m_TextMeshPro;
         private RectTransform m_frameCounter_transform;
@@ -103,7 +104,15 @@ namespace TMPro.Examples
                 else
                     htmlColorTag = "<color=green>";
 
-                m_TextMeshPro.SetText(htmlColorTag + fpsLabel, fps, ms);
+				if (isVisible == true) 
+				{
+					m_TextMeshPro.SetText (htmlColorTag + fpsLabel, fps, ms);
+				} 
+
+				else 
+				{
+					m_TextMeshPro.SetText ("");
+				}
 
                 m_Frames = 0;
                 m_LastInterval = timeNow;

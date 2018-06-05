@@ -7,6 +7,7 @@ public class GameController : MonoBehaviour
 {
 	public SaveAndLoadScript saveLoadScript;
 	public Terrain terrain;
+	public WeatherSystem weatherSystem;
 
 	public int SwitchesActivated;
 	public int MaximumSwitchesToActivate = 6;
@@ -24,6 +25,7 @@ public class GameController : MonoBehaviour
 	public GameObject CellarDoorsOpened;
 
 	[Header ("Background audio")]
+	public GameObject BackgroundAmbienceParent;
 	public AudioSource[] BackgroundAmbience;
 
 	[Header ("Level timer")]
@@ -51,7 +53,7 @@ public class GameController : MonoBehaviour
 		InvokeRepeating ("LevelTimer", 0, 1);
 
 		SetSwitchState (false);
-		Debug.Log ("Turned off switches.");
+		weatherSystem.enabled = false;
 	}
 
 	public void UpdateBackgroundAmbience ()

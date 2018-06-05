@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Switch
   - JumpScareVisible
+  - Enemy
+  - Flashlight_Pickup
   layers:
   - Default
   - TransparentFX
@@ -23,7 +25,7 @@ TagManager:
   - SceneLoadUI
   - Switch
   - AngelCam
-  - 
+  - OpeningCredits
   - 
   - 
   - 

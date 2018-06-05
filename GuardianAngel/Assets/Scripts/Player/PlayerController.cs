@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.PostProcessing;
 using UnityStandardAssets.Characters.FirstPerson;
@@ -63,7 +64,11 @@ public class PlayerController : MonoBehaviour
 
 	public int HealthRegenRate;
 
+	[Header ("Game over")]
+	public GameObject GameOverObject;
+
 	[Header ("Flashlight Settings")]
+	public GameObject FlashlightObject;
 	public Light Flashlight;
 	public FlashlightSettings NormalFlashlightSettings;
 	public FlashlightSettings FocussedFlashlightSettings;
@@ -71,6 +76,8 @@ public class PlayerController : MonoBehaviour
 	public AudioSource FocusFlashlightSound;
 	public float FlashlightSettingSmoothing = 1;
 	public Animator FlashlightAnim;
+
+	public UnityEvent OnFlashlightPickup;
 
 	[Header ("Misc")]
 	public Transform DonateBox;
@@ -86,6 +93,7 @@ public class PlayerController : MonoBehaviour
 		CurrentHealth = StartingHealth;
 		initalRunSpeed = fpsController.m_RunSpeed;
 		InvokeRepeating ("CheckRegenHealth", 0, 1);
+		FlashlightObject.SetActive (false);
 	}
 
 	void Update ()
@@ -105,7 +113,7 @@ public class PlayerController : MonoBehaviour
 
 	void CheckRegenHealth ()
 	{
-		if (CurrentHealth < StartingHealth && isJumpScared == false) 
+		if (CurrentHealth < StartingHealth && isJumpScared == false && CurrentHealth > 0) 
 		{
 			CurrentHealth += HealthRegenRate;
 		}
@@ -114,13 +122,13 @@ public class PlayerController : MonoBehaviour
 	void UpdateHealthParticles ()
 	{
 		var HealthParticleEmissionAmount = HealthAmountParticles.emission;
-		HealthParticleEmissionAmount.rateOverTime = -0.8f * CurrentHealth + 80;
+		HealthParticleEmissionAmount.rateOverTime = -1.6f * CurrentHealth + 160;
 	}
 
 	void CheckHeartBeatAndBreathing ()
 	{
-		float BreathingPitch = -0.005f * SprintTimeRemaining + 1.02f;
-		BreathingSound.pitch = BreathingPitch;
+		//float BreathingPitch = -0.005f * SprintTimeRemaining + 1.02f;
+		//BreathingSound.pitch = BreathingPitch;
 
 		float BreathingVolume = -0.01f * SprintTimeRemaining + 0.2f;
 		BreathingSound.volume = BreathingVolume;
@@ -194,6 +202,22 @@ public class PlayerController : MonoBehaviour
 					ActionText.text = "E / F";
 				}
 			}
+
+			if (objectHit.tag == "Flashlight_Pickup") 
+			{
+				if (UIDescriptionAnim.GetBool ("Visible") == false) 
+				{
+					UIDescriptionAnim.SetBool ("Visible", true);
+				}
+
+				if (UIActionAnim.GetBool ("Visible") == false) 
+				{
+					UIActionAnim.SetBool ("Visible", true);
+				}
+
+				DescriptionText.text = "FLASHLIGHT";
+				ActionText.text = "E / F";
+			}
 		}
 
 		else // Did not find anything to raycast on.
@@ -234,10 +258,12 @@ public class PlayerController : MonoBehaviour
 					Debug.Log ("Activated a switch."); 
 				}
 					
-				if (objectHit.tag == "Flashlight") 
+	
+				if (objectHit.tag == "Flashlight_Pickup") 
 				{
+					OnFlashlightPickup.Invoke ();
+					ObjectiveText.text = "Strobe flashlight: Left-mouse";
 					Debug.Log ("Used/picked up flashlight.");
-
 				}
 			}
 
@@ -275,8 +301,12 @@ public class PlayerController : MonoBehaviour
 					CamAnim.SetBool ("Walking", false);
 					CamAnim.SetBool ("Running", true);
 					SprintTimeRemaining -= Time.deltaTime;
-					FlashlightAnim.SetBool ("FlashlightWalk", false);
-					FlashlightAnim.SetBool ("FlashlightRun", true);
+
+					if (FlashlightObject.activeInHierarchy == true && FlashlightAnim.enabled == true) 
+					{
+						FlashlightAnim.SetBool ("FlashlightWalk", false);
+						FlashlightAnim.SetBool ("FlashlightRun", true);
+					}
 
 					if (SprintParticles.isPlaying == false) 
 					{
@@ -312,8 +342,12 @@ public class PlayerController : MonoBehaviour
 					CamAnim.SetBool ("Walking", true);
 					CamAnim.SetBool ("Running", false);
 					SprintTimeRemaining = 0;
-					FlashlightAnim.SetBool ("FlashlightWalk", true);
-					FlashlightAnim.SetBool ("FlashlightRun", false);
+
+					if (FlashlightObject.activeInHierarchy == true && FlashlightAnim.enabled == true) 
+					{
+						FlashlightAnim.SetBool ("FlashlightWalk", true);
+						FlashlightAnim.SetBool ("FlashlightRun", false);
+					}
 
 					if (SprintParticles.isPlaying == true) 
 					{
@@ -330,8 +364,12 @@ public class PlayerController : MonoBehaviour
 				WalkState = true;
 				CamAnim.SetBool ("Walking", true);
 				CamAnim.SetBool ("Running", false);
-				FlashlightAnim.SetBool ("FlashlightWalk", true);
-				FlashlightAnim.SetBool ("FlashlightRun", false);
+
+				if (FlashlightObject.activeInHierarchy == true && FlashlightAnim.enabled == true) 
+				{
+					FlashlightAnim.SetBool ("FlashlightWalk", true);
+					FlashlightAnim.SetBool ("FlashlightRun", false);
+				}
 
 				if (SprintParticles.isPlaying == true) 
 				{
@@ -362,9 +400,13 @@ public class PlayerController : MonoBehaviour
 			CamAnim.SetBool ("Walking", false);
 			CamAnim.SetBool ("Running", false);
 			CamAnim.SetTrigger ("Idle");
-			FlashlightAnim.SetBool ("FlashlightWalk", false);
-			FlashlightAnim.SetBool ("FlashlightRun", false);
-			FlashlightAnim.SetTrigger ("FlashlightIdle");
+
+			if (FlashlightObject.activeInHierarchy == true && FlashlightAnim.enabled == true)
+			{
+				FlashlightAnim.SetBool ("FlashlightWalk", false);
+				FlashlightAnim.SetBool ("FlashlightRun", false);
+				FlashlightAnim.SetTrigger ("FlashlightIdle");
+			}
 
 			if (SprintParticles.isPlaying == true) 
 			{
@@ -394,79 +436,121 @@ public class PlayerController : MonoBehaviour
 	{
 		HealthParticleBurst.Play ();
 
-		if (CurrentHealth > 0) 
-		{
-			CurrentHealth -= Damage;
-		} 
-
-		else
-		
-		{
-			CurrentHealth = 0;
-		}
-			
 		if (IsInvoking ("RecoverJumpscare") == false) 
 		{
 			SetRecoverJumpScareTimer (3);
 			isJumpScared = true;
 		}
+
+		if (CurrentHealth > 0) 
+		{
+			CurrentHealth -= Damage;
+		} 
+
+		if (CurrentHealth <= 0)
+		{
+			CurrentHealth = 0;
+			GameOverObject.SetActive (true);
+			fpsController.enabled = false;
+		}
 	}
+
+	void SetFlashlightSetting (bool Strong)
+	{
+		if (Strong == true) {
+			// Set flashlight settings to focussed.
+			Flashlight.range = Mathf.Lerp (
+				Flashlight.range, 
+				FocussedFlashlightSettings.Range, 
+				FlashlightSettingSmoothing * Time.deltaTime
+			);
+
+			Flashlight.spotAngle = Mathf.Lerp (
+				Flashlight.spotAngle, 
+				FocussedFlashlightSettings.SpotAngle, 
+				FlashlightSettingSmoothing * Time.deltaTime
+			);
+
+			Flashlight.color = Color.Lerp (
+				Flashlight.color, 
+				FocussedFlashlightSettings.color, 
+				FlashlightSettingSmoothing * Time.deltaTime
+			);
+
+			Flashlight.intensity = Mathf.Lerp (
+				Flashlight.intensity, 
+				FocussedFlashlightSettings.Intensity, 
+				FlashlightSettingSmoothing * Time.deltaTime
+			);
+
+			return;
+		} else {
+			// Set flashlight settings to normal.
+			Flashlight.range = Mathf.Lerp (
+				Flashlight.range, 
+				NormalFlashlightSettings.Range, 
+				FlashlightSettingSmoothing * Time.deltaTime
+			);
+
+			Flashlight.spotAngle = Mathf.Lerp (
+				Flashlight.spotAngle, 
+				NormalFlashlightSettings.SpotAngle, 
+				FlashlightSettingSmoothing * Time.deltaTime
+			);
+
+			Flashlight.color = Color.Lerp (
+				Flashlight.color, 
+				NormalFlashlightSettings.color, 
+				FlashlightSettingSmoothing * Time.deltaTime
+			);
+
+			Flashlight.intensity = Mathf.Lerp (
+				Flashlight.intensity, 
+				NormalFlashlightSettings.Intensity, 
+				FlashlightSettingSmoothing * Time.deltaTime
+			);
+		}
+	}
+		
 
 	void CheckEnemies ()
 	{
-		// Player pressed flashlight.
-		if (playerActions.Flashlight.IsPressed) 
-		{
-			// If enemy checker is off.
-			if (EnemyChecker.enabled == false) 
-			{
-				EnemyChecker.enabled = true; // Turn on enemy checker.
+		if (FlashlightObject.activeInHierarchy == true) {
+			// Player pressed flashlight.
+			if (playerActions.Flashlight.IsPressed) {
+				// If enemy checker is off.
+				if (EnemyChecker.enabled == false) {
+					EnemyChecker.enabled = true; // Turn on enemy checker.
+				}
+
+				SetFlashlightSetting (true);
+			} else {
+				// If enemy checker is on.
+				if (EnemyChecker.enabled == true) {
+					EnemyChecker.enabled = false; // Turn of enemy checker.
+				}
+
+				SetFlashlightSetting (false);
 			}
 
-			// Set flashlight settings to focussed.
-			Flashlight.range = Mathf.Lerp (Flashlight.range, FocussedFlashlightSettings.Range, FlashlightSettingSmoothing * Time.deltaTime);
-			Flashlight.spotAngle = Mathf.Lerp (Flashlight.spotAngle, FocussedFlashlightSettings.SpotAngle, FlashlightSettingSmoothing * Time.deltaTime);
-			Flashlight.color = Color.Lerp (Flashlight.color, FocussedFlashlightSettings.color, FlashlightSettingSmoothing * Time.deltaTime);
-			Flashlight.intensity = Mathf.Lerp (Flashlight.intensity, FocussedFlashlightSettings.Intensity, FlashlightSettingSmoothing * Time.deltaTime);
-		} 
+			if (playerActions.Flashlight.WasPressed) {
+				FocusFlashlightSound.Play ();
 
-		else 
-		
-		{
-			// If enemy checker is on.
-			if (EnemyChecker.enabled == true) 
-			{
-				EnemyChecker.enabled = false; // Turn of enemy checker.
-			}
+				RaycastHit hit;
+				Ray ray = PlayerCam.ScreenPointToRay (Input.mousePosition);
 
-			// Set flashlight settings to normal.
-			Flashlight.range = Mathf.Lerp (Flashlight.range, NormalFlashlightSettings.Range, FlashlightSettingSmoothing * Time.deltaTime);
-			Flashlight.spotAngle = Mathf.Lerp (Flashlight.spotAngle, NormalFlashlightSettings.SpotAngle, FlashlightSettingSmoothing * Time.deltaTime);
-			Flashlight.color = Color.Lerp (Flashlight.color, NormalFlashlightSettings.color, FlashlightSettingSmoothing * Time.deltaTime);
-			Flashlight.intensity = Mathf.Lerp (Flashlight.intensity, NormalFlashlightSettings.Intensity, FlashlightSettingSmoothing * Time.deltaTime);
-		}
+				if (Physics.Raycast (ray, out hit, 2f)) {
+					Transform objectHit = hit.transform;
 
-		if (playerActions.Flashlight.WasPressed) 
-		{
-			FocusFlashlightSound.Play ();
-
-			RaycastHit hit;
-			Ray ray = PlayerCam.ScreenPointToRay (Input.mousePosition);
-
-			if (Physics.Raycast (ray, out hit, 2f))
-			{
-				Transform objectHit = hit.transform;
-
-				if (objectHit == DonateBox) 
-				{
-					DonateBox.GetComponent <OpenUrlOnPress> ().OpenUrl (donateBoxUrlName);
+					if (objectHit == DonateBox) {
+						DonateBox.GetComponent <OpenUrlOnPress> ().OpenUrl (donateBoxUrlName);
+					}
 				}
 			}
-		}
 
-		if (playerActions.Flashlight.WasReleased) 
-		{
-			NormalFlashlightSound.Play ();
+			if (playerActions.Flashlight.WasReleased) {
+				NormalFlashlightSound.Play ();
+			}
 		}
 	}
 

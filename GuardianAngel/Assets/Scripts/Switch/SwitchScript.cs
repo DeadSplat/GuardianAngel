@@ -5,6 +5,7 @@ public class SwitchScript : MonoBehaviour
 	public PlayerController playerControllerScript;
 	public GameController gameControllerScript;
 	public WeatherSystem weatherSystem;
+	public EnemyManager enemyManagerScript;
 
 	public Animator SwitchAnim;
 	public Light[] RedLights;
@@ -41,6 +42,13 @@ public class SwitchScript : MonoBehaviour
 		SwitchActivateSound.Play ();
 		SwitchActivateParticles.Play ();
 
+		if (enemyManagerScript.enemiesCanSpawn == false && isMasterSwitch == false)
+		{
+			enemyManagerScript.enemiesCanSpawn = true;
+			enemyManagerScript.GetNextSpawnTime ();
+			enemyManagerScript.GetNextDeactivateTime ();
+		}
+
 		if (isMasterSwitch == false)
 		{
 			gameControllerScript.SwitchesActivated++;
@@ -57,6 +65,7 @@ public class SwitchScript : MonoBehaviour
 			SetObjectiveText ("Activate " + gameControllerScript.MaximumSwitchesToActivate + " switches");
 			gameControllerScript.SetSwitchState (true);
 			gameControllerScript.MasterAmbience.Play ();
+			weatherSystem.enabled = true;
 		}
 	}
 

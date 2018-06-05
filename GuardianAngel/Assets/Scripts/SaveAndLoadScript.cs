@@ -22,6 +22,8 @@ public class SaveAndLoadScript : MonoBehaviour
 	// Live variables.
 	[Header ("Player Data")]
 	public string Username = "default";
+	public int levelOneDifficulty;
+	public LevelOneDifficulty[] LevelOneDifficulties;
 
 	[Header ("Settings Data")]
 	public PostProcessingProfile VisualSettings;
@@ -69,6 +71,17 @@ public class SaveAndLoadScript : MonoBehaviour
 		}
 
 		//Application.targetFrameRate = 20;
+		framerateScript.isVisible = false;
+	}
+
+	void Update ()
+	{
+		#if UNITY_EDITOR
+		if (Input.GetKeyDown (KeyCode.Tab)) 
+		{
+			framerateScript.isVisible = !framerateScript.isVisible;
+		}
+		#endif
 	}
 
 	void FixedUpdate ()
@@ -531,6 +544,7 @@ public class SaveAndLoadScript : MonoBehaviour
 	public class playerData
 	{
 		public string Username;
+		public int levelOneDifficulty;
 	}
 
 	[Serializable]

@@ -3,8 +3,14 @@
 public class Enemy : MonoBehaviour 
 {
 	public PlayerController playerControllerScript;
+	public GameController gameControllerScript;
+	public SaveAndLoadScript saveAndLoadScript;
+	public EnemyManager enemyManagerScript;
 	public Transform Player;
 	public Camera PlayerCam;
+	public LevelOneDifficulty[] levelOneDifficulty;
+
+	public MeshRenderer[] Eyes;
 
 	[Header ("Attacking")]
 	public MeshRenderer AttackMesh;
@@ -17,20 +23,24 @@ public class Enemy : MonoBehaviour
 	public Collider AngelAttackCol;
 	public Collider EnemyChecker;
 
+	public Animator RedVignette;
+
 	[Header ("Movement")]
 	public bool onScreen;
 	public float MovementSpeed = 1;
 	public float BufferDistance;
+	public Vector2[] FluidAttackSpeeds;
 	[Tooltip ("Current fluid movement for Angels when facing away from them.")]
-	public float AttackSpeed = 0.5f;
+
+	public Vector2[] TeleportAttackSpeeds;
 	[Tooltip ("Current teleporting movement for Angels when facing towards them.")]
 	public float TeleportAttackSpeed = 2;
-
 	public float TeleportTimeDuration;
 	public float TeleportTimeRemaining;
 	public AudioSource TeleportSound;
 
 	public int Damage = 2;
+	public float AttackSpeed = 0.5f;
 
 	[Header ("Jump scares")]
 	public Animator JumpScareCam;
@@ -46,15 +56,84 @@ public class Enemy : MonoBehaviour
 	{
 		DefendingTimerRemain = 0;
 		isDefending = false;
-
 		InvokeRepeating ("CheckAngelAttackCol", 0, AttackSpeed);
+
+		saveAndLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
+		RefreshDifficulty ();
+	}
+
+	void OnEnable ()
+	{
+		if (saveAndLoadScript == null) 
+		{
+			saveAndLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
+			GetNewMovementSpeed ();
+		} 
+
+		else
+		
+		{
+			GetNewMovementSpeed ();
+		}
+	}
+
+	void RefreshDifficulty ()
+	{
+		FluidAttackSpeeds = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].FluidAttackSpeeds;
+		TeleportAttackSpeeds = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].TeleportAttackSpeeds;
+		AttackSpeed = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].AttackSpeed;
+		Damage = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].Damage;
+
+		// Updates the eyes.
+		foreach (MeshRenderer eye in Eyes) 
+		{
+			eye.material = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].EyeMaterial;
+		}
 	}
 
 	void Update ()
 	{
 		CheckDefendingTimer ();
-		GenerateNextTeleportMovement ();
+
+		if (saveAndLoadScript != null) 
+		{
+			GenerateNextTeleportMovement ();
+		}
+
 		CheckIfVisible ();
+		CheckPlayerHealth ();
+	}
+
+	void CheckPlayerHealth ()
+	{
+		if (playerControllerScript.CurrentHealth <= 0) 
+		{
+			if (enemyManagerScript.enabled == true) 
+			{
+				enemyManagerScript.enabled = false;
+				gameControllerScript.BackgroundAmbienceParent.SetActive (false);
+				playerControllerScript.HeartBeatSound.Stop ();
+				playerControllerScript.BreathingSound.Stop ();
+			}
+
+			gameObject.SetActive (false);
+		}
+	}
+
+	void GetNewMovementSpeed ()
+	{
+		MovementSpeed = Random.Range (
+			FluidAttackSpeeds [gameControllerScript.SwitchesActivated].x, 
+			FluidAttackSpeeds [gameControllerScript.SwitchesActivated].y
+		);
+	}
+
+	void GetNewTeleportSpeed ()
+	{
+		TeleportAttackSpeed = Random.Range (
+			TeleportAttackSpeeds [gameControllerScript.SwitchesActivated].x, 
+			TeleportAttackSpeeds [gameControllerScript.SwitchesActivated].y
+		);
 	}
 
 	void GenerateNextTeleportMovement ()
@@ -91,6 +170,7 @@ public class Enemy : MonoBehaviour
 
 						transform.LookAt (Player.transform);
 						TeleportSound.Play ();
+						GetNewTeleportSpeed ();
 					}
 
 					if (Vector3.Distance (Player.transform.position, transform.position) <= 0.1f) 
@@ -107,7 +187,7 @@ public class Enemy : MonoBehaviour
 	void CheckAngelAttackCol ()
 	{
 		if (AttackingPose.activeSelf == true && 
-			Vector3.Distance (Player.transform.position, transform.position) <= BufferDistance) 
+			Vector3.Distance (Player.transform.position, transform.position) <= 5) 
 		{
 			AngelAttackCol.enabled = !AngelAttackCol.enabled;
 			playerControllerScript.TakeDamage (Damage);
@@ -122,6 +202,8 @@ public class Enemy : MonoBehaviour
 					JumpScareCam.SetTrigger ("Jumpscare");
 				}
 			}
+
+			RedVignette.Play ("RedVignette");
 		}
 	}
 

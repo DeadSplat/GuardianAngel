@@ -371,9 +371,14 @@ MonoBehaviour:
   AllowLoading: 1
   AllowSaving: 1
   Username: default
+  levelOneDifficulty: 0
+  LevelOneDifficulties:
+  - {fileID: 11400000, guid: 4bda68f3e85a1f6468dc06a14ae4de75, type: 2}
   VisualSettings: {fileID: 0}
   VisualSettingsComponent: {fileID: 0}
   cam: {fileID: 0}
+  framerateScript: {fileID: 0}
+  LowFpsTime: 0
   QualitySettingsIndex: 1
   useHdr: 1
   sunShaftsEnabled: 1
@@ -383,6 +388,7 @@ MonoBehaviour:
   EffectsVolume: 1
   PlayerData:
     Username: Default
+    levelOneDifficulty: 0
   SettingsData:
     QualitySettingsIndex: 1
     useHdr: 1
