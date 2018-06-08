@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using UnityStandardAssets.Utility;
+using UnityStandardAssets.ImageEffects;
 
 public class WeatherSystem : MonoBehaviour 
 {
 	public GameController gameControllerScript;
+	public SunShafts sunShaftsScript;
 
 	[Header ("Lightning")]
 	public Animator LightFlash;
@@ -41,6 +43,11 @@ public class WeatherSystem : MonoBehaviour
 		if (Sun.transform.eulerAngles.x > 180) 
 		{
 			Sun.intensity = Mathf.Lerp (Sun.intensity, 0, 0.1f * Time.deltaTime);
+
+			if (sunShaftsScript == true)
+			{
+				sunShaftsScript.enabled = false;
+			}
 		}
 
 		if (Sun.intensity < 0.02f && SunAutoRotateScript.enabled == true) 
