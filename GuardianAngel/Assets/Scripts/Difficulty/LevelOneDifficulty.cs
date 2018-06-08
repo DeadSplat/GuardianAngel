@@ -5,6 +5,12 @@ public class LevelOneDifficulty : ScriptableObject
 {
 	public int Difficulty;
 
+	[Header ("Enemy spawn attributes")]
+	public Vector2[] SpawnTimes;
+	public Vector2[] SpawnRadii;
+	public Vector2[] DeactivateTimes;
+
+	[Header ("Individual enemy attributes")]
 	public Vector2[] FluidAttackSpeeds;
 	public Vector2[] TeleportAttackSpeeds;
 

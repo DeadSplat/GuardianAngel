@@ -3,6 +3,7 @@
 public class EnemyManager : MonoBehaviour
 {
 	public GameController gameControllerScript;
+	public LevelOneDifficulty[] LevelOneDifficulty;
 	public Transform Player;
 	public GameObject[] Enemies;
 	public bool enemiesCanSpawn;
@@ -15,6 +16,13 @@ public class EnemyManager : MonoBehaviour
 	[Header ("Deactivation")]
 	public float nextDeactivateTimeRemaining;
 	public Vector2[] DeactivateTimes;
+
+	void Start ()
+	{
+		SpawnTimes = LevelOneDifficulty [gameControllerScript.thisDifficulty].SpawnTimes;
+		SpawnRadii = LevelOneDifficulty [gameControllerScript.thisDifficulty].SpawnRadii;
+		DeactivateTimes = LevelOneDifficulty [gameControllerScript.thisDifficulty].DeactivateTimes;
+	}
 
 	void Update ()
 	{

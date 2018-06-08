@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using UnityStandardAssets.Utility;
+using UnityStandardAssets.ImageEffects;
 
 public class WeatherSystem : MonoBehaviour 
 {
 	public GameController gameControllerScript;
+	public SunShafts sunShaftsScript;
 
 	[Header ("Lightning")]
 	public Animator LightFlash;
@@ -41,30 +43,39 @@ public class WeatherSystem : MonoBehaviour
 		if (Sun.transform.eulerAngles.x > 180) 
 		{
 			Sun.intensity = Mathf.Lerp (Sun.intensity, 0, 0.1f * Time.deltaTime);
+
+			if (sunShaftsScript == true)
+			{
+				sunShaftsScript.enabled = false;
+			}
 		}
 
-		if (Sun.intensity < 0.02f) 
+		if (Sun.intensity < 0.02f && SunAutoRotateScript.enabled == true) 
 		{
 			SunAutoRotateScript.enabled = false;
 			Sun.enabled = false;
+			gameControllerScript.MasterAmbience.Play ();
 		}
 	}
 
 	void CheckLightning ()
 	{
-		if (NewLightningTime > 0) 
+		if (Sun.transform.eulerAngles.x > 180)
 		{
-			NewLightningTime -= Time.deltaTime;
-			float targetRainVol = Mathf.Clamp (0.125f * gameControllerScript.SwitchesActivated, 0, 1);
-			RainLoop.volume = Mathf.Lerp (RainLoop.volume, targetRainVol, 3 * Time.deltaTime);
-			return;
-		} 
+			if (NewLightningTime > 0)
+			{
+				NewLightningTime -= Time.deltaTime;
+				float targetRainVol = Mathf.Clamp (0.125f * gameControllerScript.SwitchesActivated, 0, 1);
+				RainLoop.volume = Mathf.Lerp (RainLoop.volume, targetRainVol, 3 * Time.deltaTime);
+				return;
+			}
 
-		else 
-
-		{
-			DoLightning ();
-			ResetLightningTime ();
+			else 
+			
+			{
+				DoLightning ();
+				ResetLightningTime ();
+			}
 		}
 	}
 
@@ -90,5 +101,10 @@ public class WeatherSystem : MonoBehaviour
 	void ResetLightningTime ()
 	{
 		NewLightningTime = Random.Range (LightningTime.x, LightningTime.y);
+	}
+
+	public void SetSunMovement (bool move)
+	{
+		SunAutoRotateScript.enabled = move;
 	}
 }

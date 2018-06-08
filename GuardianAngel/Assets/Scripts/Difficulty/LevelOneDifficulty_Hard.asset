@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 964379bfe0f286c4db70d36153ac22a1, type: 3}
+  m_Name: LevelOneDifficulty_Hard
+  m_EditorClassIdentifier: 
+  Difficulty: 1
+  SpawnTimes:
+  - {x: 0, y: 0}
+  - {x: 16, y: 19}
+  - {x: 10, y: 13}
+  - {x: 7, y: 9}
+  - {x: 6, y: 11}
+  - {x: 2, y: 4}
+  - {x: 2, y: 3}
+  SpawnRadii:
+  - {x: 0, y: 0}
+  - {x: 20, y: 60}
+  - {x: 16, y: 45}
+  - {x: 12, y: 30}
+  - {x: 8, y: 15}
+  - {x: 5, y: 9}
+  - {x: 3, y: 7}
+  DeactivateTimes:
+  - {x: 0, y: 0}
+  - {x: 25, y: 45}
+  - {x: 15, y: 45}
+  - {x: 10, y: 30}
+  - {x: 10, y: 30}
+  - {x: 10, y: 30}
+  - {x: 10, y: 30}
+  FluidAttackSpeeds:
+  - {x: 0, y: 0}
+  - {x: 16, y: 18}
+  - {x: 18, y: 24}
+  - {x: 32, y: 36}
+  - {x: 40, y: 48}
+  - {x: 50, y: 70}
+  - {x: 80, y: 90}
+  TeleportAttackSpeeds:
+  - {x: 0, y: 0}
+  - {x: 25, y: 30}
+  - {x: 70, y: 90}
+  - {x: 95, y: 120}
+  - {x: 140, y: 150}
+  - {x: 180, y: 185}
+  - {x: 200, y: 220}
+  AttackSpeed: 0.2
+  Damage: 16
+  EyeMaterial: {fileID: 2100000, guid: c81f1e30029710e4b812057cab5005a3, type: 2}

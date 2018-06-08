@@ -4,6 +4,7 @@ public class SwitchScript : MonoBehaviour
 {
 	public PlayerController playerControllerScript;
 	public GameController gameControllerScript;
+	public ParticleSystem Rings;
 	public WeatherSystem weatherSystem;
 	public EnemyManager enemyManagerScript;
 
@@ -57,6 +58,12 @@ public class SwitchScript : MonoBehaviour
 			gameControllerScript.RefreshSwitchesLines ();
 			gameControllerScript.UpdateBackgroundAmbience ();
 			weatherSystem.UpdateRainEmission ();
+
+			if (gameControllerScript.SwitchesActivated == 2) 
+			{
+				weatherSystem.enabled = true;
+				weatherSystem.SetSunMovement (true);
+			}
 		}
 
 		else 
@@ -64,8 +71,6 @@ public class SwitchScript : MonoBehaviour
 		{
 			SetObjectiveText ("Activate " + gameControllerScript.MaximumSwitchesToActivate + " switches");
 			gameControllerScript.SetSwitchState (true);
-			gameControllerScript.MasterAmbience.Play ();
-			weatherSystem.enabled = true;
 		}
 	}
 
@@ -104,6 +109,7 @@ public class SwitchScript : MonoBehaviour
 		else 
 		{
 			playerControllerScript.ObjectiveText.text = "Run to the bunker";
+			Rings.Play ();
 		}
 	}
 }
