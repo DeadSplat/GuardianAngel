@@ -97,9 +97,9 @@ public class SaveAndLoadScript : MonoBehaviour
 					QualitySettingsIndex = 0;
 					Application.targetFrameRate = -1;
 
-					if (Screen.width > 1366 || Screen.height < 768) 
+					if (Screen.width > 640 || Screen.height > 360) 
 					{
-						Screen.SetResolution (1366, 768, Screen.fullScreen);
+						Screen.SetResolution (640, 360, Screen.fullScreen);
 					}
 
 					SaveSettingsData ();
