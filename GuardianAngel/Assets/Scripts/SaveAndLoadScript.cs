@@ -71,7 +71,7 @@ public class SaveAndLoadScript : MonoBehaviour
 		}
 
 		//Application.targetFrameRate = 20;
-		framerateScript.isVisible = false;
+
 	}
 
 	void Update ()
@@ -497,6 +497,7 @@ public class SaveAndLoadScript : MonoBehaviour
 	{
 		QualitySettings.SetQualityLevel (QualitySettingsIndex);
 		CheckAndApplyQualitySettings ();
+		framerateScript.isVisible = false;
 		AudioListener.volume = Mathf.Clamp (MasterVolume, 0, 1);
 	}
 
