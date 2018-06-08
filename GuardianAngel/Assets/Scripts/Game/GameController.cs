@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
 	public SaveAndLoadScript saveLoadScript;
 	public Terrain terrain;
 	public WeatherSystem weatherSystem;
+	public int thisDifficulty;
 
 	public int SwitchesActivated;
 	public int MaximumSwitchesToActivate = 6;
@@ -40,6 +41,8 @@ public class GameController : MonoBehaviour
 		saveLoadScript.gameControllerScript = this;
 		saveLoadScript.LoadPlayerData ();
 		saveLoadScript.LoadSettingsData ();
+
+		thisDifficulty = saveLoadScript.levelOneDifficulty;
 
 		AudioListener.volume = saveLoadScript.MasterVolume;
 

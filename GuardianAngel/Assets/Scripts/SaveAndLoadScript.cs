@@ -214,6 +214,7 @@ public class SaveAndLoadScript : MonoBehaviour
 	void SetPlayerData (playerData data)
 	{
 		data.Username = Username;
+		data.levelOneDifficulty = levelOneDifficulty;
 	}
 
 	// Load PlayerData main.
@@ -301,12 +302,13 @@ public class SaveAndLoadScript : MonoBehaviour
 	void LoadPlayerDataContents (playerData data)
 	{
 		Username = data.Username;
+		levelOneDifficulty = data.levelOneDifficulty;
+		Debug.Log ("Loaded difficulty is: " + levelOneDifficulty);
 	}
 
 	// Puts new data into relevant scripts.
 	public void StorePlayerDataInGame ()
 	{
-
 	}
 		
 	// Gets variables from this script = variables in other scripts.

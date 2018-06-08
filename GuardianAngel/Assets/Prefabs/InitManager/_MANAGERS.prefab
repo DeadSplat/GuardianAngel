@@ -374,6 +374,7 @@ MonoBehaviour:
   levelOneDifficulty: 0
   LevelOneDifficulties:
   - {fileID: 11400000, guid: 4bda68f3e85a1f6468dc06a14ae4de75, type: 2}
+  - {fileID: 11400000, guid: c3db425df48f86e42ad70fda986a9945, type: 2}
   VisualSettings: {fileID: 0}
   VisualSettingsComponent: {fileID: 0}
   cam: {fileID: 0}

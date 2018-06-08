@@ -60,6 +60,8 @@ public class Enemy : MonoBehaviour
 
 		saveAndLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
 		RefreshDifficulty ();
+
+		InvokeRepeating ("GetNewMovementSpeed", 0, 3);
 	}
 
 	void OnEnable ()
@@ -67,14 +69,7 @@ public class Enemy : MonoBehaviour
 		if (saveAndLoadScript == null) 
 		{
 			saveAndLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
-			GetNewMovementSpeed ();
 		} 
-
-		else
-		
-		{
-			GetNewMovementSpeed ();
-		}
 	}
 
 	void RefreshDifficulty ()

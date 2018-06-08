@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.PostProcessing;
+using UnityEngine.Audio;
 using UnityStandardAssets.Characters.FirstPerson;
 using InControl;
 using TMPro;
@@ -11,6 +12,7 @@ public class PlayerController : MonoBehaviour
 	public SaveAndLoadScript saveLoadScript;
 	public LocalSceneLoader localSceneLoaderScript;
 	public PostProcessingProfile postProcess;
+	public AudioMixer masterAudioMix;
 
 	[Header ("Input")]
 	public FirstPersonController fpsController;
@@ -44,6 +46,8 @@ public class PlayerController : MonoBehaviour
 	public float WalkFov = 60;
 	public float SprintFov = 65;
 	public float FovSmoothing = 60;
+	public float dofOffset;
+	private float dofVel;
 
 	[Header ("UI Actions")]
 	public Animator UIActionAnim;
@@ -105,10 +109,69 @@ public class PlayerController : MonoBehaviour
 		CheckActionMenu ();
 		CheckHeartBeatAndBreathing ();
 		UpdateHealthParticles ();
+		CheckDepthOfField ();
+		CheckLowPassFilter ();
 
 		#if UNITY_EDITOR
 		CheckRestart ();
 		#endif
+	}
+
+	void CheckLowPassFilter ()
+	{
+		masterAudioMix.SetFloat ("LowPassFreq", 
+			3070f * SprintTimeRemaining * (0.01f * CurrentHealth) + 500
+		);
+	}
+
+	public float GetLowPassFilerVal ()
+	{
+		float value;
+		bool result = masterAudioMix.GetFloat ("LowPassFreq", out value);
+
+		if (result) 
+		{
+			return value;
+		} 
+
+		else 
+		
+		{
+			return 0f;
+		}
+	}
+
+	void CheckDepthOfField ()
+	{
+		RaycastHit hit;
+		Ray ray = PlayerCam.ViewportPointToRay (new Vector2 (0.5f, 0.5f));
+
+		var dofsettings = postProcess.depthOfField.settings;
+
+		if (Physics.Raycast (ray, out hit, 1000f)) 
+		{
+			float dofdistance = Vector3.Distance (ray.origin, hit.point) + dofOffset;
+
+			dofsettings.focusDistance = Mathf.SmoothDamp (
+				postProcess.depthOfField.settings.focusDistance, 
+				dofdistance, 
+				ref dofVel, 
+				2 * Time.deltaTime
+			);
+		}
+
+		else
+		
+		{
+			dofsettings.focusDistance =  Mathf.SmoothDamp (
+				postProcess.depthOfField.settings.focusDistance, 
+				1000, 
+				ref dofVel, 
+				100 * Time.deltaTime
+			);
+		}
+
+		postProcess.depthOfField.settings = dofsettings;
 	}
 
 	void CheckRegenHealth ()

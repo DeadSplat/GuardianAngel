@@ -57,6 +57,12 @@ public class SwitchScript : MonoBehaviour
 			gameControllerScript.RefreshSwitchesLines ();
 			gameControllerScript.UpdateBackgroundAmbience ();
 			weatherSystem.UpdateRainEmission ();
+
+			if (gameControllerScript.SwitchesActivated == 2) 
+			{
+				weatherSystem.enabled = true;
+				weatherSystem.SetSunMovement (true);
+			}
 		}
 
 		else 
@@ -64,8 +70,6 @@ public class SwitchScript : MonoBehaviour
 		{
 			SetObjectiveText ("Activate " + gameControllerScript.MaximumSwitchesToActivate + " switches");
 			gameControllerScript.SetSwitchState (true);
-			gameControllerScript.MasterAmbience.Play ();
-			weatherSystem.enabled = true;
 		}
 	}
 
