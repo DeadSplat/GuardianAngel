@@ -58,7 +58,7 @@ public class SaveAndLoadScript : MonoBehaviour
 				//settingsManagerScript = GameObject.Find ("SettingsManager").GetComponent<SettingsManager> ();
 
 				//cam = settingsManagerScript.cam;
-				//cam = Camera.main;
+				cam = Camera.main;
 				VisualSettingsComponent = cam.GetComponent<PostProcessingBehaviour> ();
 
 				CheckPlayerDataFile ();
@@ -497,7 +497,11 @@ public class SaveAndLoadScript : MonoBehaviour
 	{
 		QualitySettings.SetQualityLevel (QualitySettingsIndex);
 		CheckAndApplyQualitySettings ();
-		framerateScript.isVisible = false;
+
+		if (framerateScript != null) 
+		{
+			framerateScript.isVisible = false;
+		}
 		AudioListener.volume = Mathf.Clamp (MasterVolume, 0, 1);
 	}
 

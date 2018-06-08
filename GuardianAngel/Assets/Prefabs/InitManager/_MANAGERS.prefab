@@ -410,8 +410,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isLoading: 1
-  delay: 0.1
-  SceneName: main
+  delay: 0.5
+  SceneName: menu
   ProgressBarSmoothTime: 1
   LevelLoadUICanvas: {fileID: 223510199688325278}
   LoadProgressText: {fileID: 114983800950139692}
@@ -446,7 +446,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 385875967
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:

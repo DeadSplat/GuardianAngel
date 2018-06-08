@@ -86,7 +86,9 @@ public class SceneLoader : MonoBehaviour
 			if (LoadProgressText.text == "100%")
 			{
 				StartCoroutine (LoadThisScene ());
-				SceneLoaderUI.Play ("SceneLoaderUIDisappear");
+
+
+				//SceneLoaderUI.Play ("SceneLoaderUIDisappear");
 			}
 
 			yield return null;
@@ -105,5 +107,6 @@ public class SceneLoader : MonoBehaviour
 		isLoading = false;
 		// Finally, we can activate the newly loaded scene.
 		async.allowSceneActivation = true;
+		SceneLoaderUI.Play ("SceneLoaderUIDisappear");
 	}
 }
