@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
 	public LocalSceneLoader localSceneLoaderScript;
 	public PostProcessingProfile postProcess;
 	public AudioMixer masterAudioMix;
+	public CursorManager cursorManager;
 
 	[Header ("Input")]
 	public FirstPersonController fpsController;
@@ -24,6 +25,12 @@ public class PlayerController : MonoBehaviour
 	public float MovementY;
 	public bool WalkState;
 	private float initalRunSpeed;
+
+	[Header ("Pausing")]
+	public bool isPaused;
+	public GameObject PauseUI;
+	public UnityEvent OnPause;
+	public UnityEvent OnResume;
 
 	[Header ("Sprint")]
 	public float SprintTimeRemaining = 28;
@@ -98,6 +105,18 @@ public class PlayerController : MonoBehaviour
 		initalRunSpeed = fpsController.m_RunSpeed;
 		InvokeRepeating ("CheckRegenHealth", 0, 1);
 		FlashlightObject.SetActive (false);
+		InvokeRepeating ("CheckCursor", 0, 1);
+	}
+
+	void CheckCursor ()
+	{
+		if (isPaused == false && CurrentHealth > 0)
+		{
+			if (Cursor.lockState != CursorLockMode.Locked) 
+			{
+				cursorManager.HideCursor ();
+			}
+		}
 	}
 
 	void Update ()
@@ -111,10 +130,37 @@ public class PlayerController : MonoBehaviour
 		UpdateHealthParticles ();
 		CheckDepthOfField ();
 		CheckLowPassFilter ();
+		CheckPause ();
 
 		#if UNITY_EDITOR
 		CheckRestart ();
 		#endif
+	}
+
+	void CheckPause ()
+	{
+		if (playerActions.Pause.WasPressed) 
+		{
+			isPaused = !isPaused;
+
+			if (isPaused == true) 
+			{
+				PauseUI.SetActive (true);
+				OnPause.Invoke ();
+			} 
+
+			else 
+			
+			{
+				PauseUI.SetActive (false);
+				OnResume.Invoke ();
+			}
+		}
+	}
+
+	public void SetPauseState (bool pauseState)
+	{
+		isPaused = pauseState; 
 	}
 
 	void CheckLowPassFilter ()

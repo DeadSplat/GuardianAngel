@@ -3,10 +3,17 @@
 public class EnemyManager : MonoBehaviour
 {
 	public GameController gameControllerScript;
-	public LevelOneDifficulty[] LevelOneDifficulty;
 	public Transform Player;
-	public GameObject[] Enemies;
+	public LevelOneDifficulty[] LevelOneDifficulty;
+
+	[Header ("Jumpscare Angel")]
+	public Material[] AngelEyeMaterials;
+	public MeshRenderer[] AngelEyes;
+
+	[Space (10)]
 	public bool enemiesCanSpawn;
+	public GameObject[] Enemies;
+
 
 	[Header ("Activation")]
 	public float nextSpawnTimeRemaining;
@@ -22,6 +29,15 @@ public class EnemyManager : MonoBehaviour
 		SpawnTimes = LevelOneDifficulty [gameControllerScript.thisDifficulty].SpawnTimes;
 		SpawnRadii = LevelOneDifficulty [gameControllerScript.thisDifficulty].SpawnRadii;
 		DeactivateTimes = LevelOneDifficulty [gameControllerScript.thisDifficulty].DeactivateTimes;
+		SetJumpscareAngelEyes ();
+	}
+
+	void SetJumpscareAngelEyes ()
+	{
+		foreach (MeshRenderer eye in AngelEyes)
+		{
+			eye.material = AngelEyeMaterials [gameControllerScript.thisDifficulty];
+		}
 	}
 
 	void Update ()
