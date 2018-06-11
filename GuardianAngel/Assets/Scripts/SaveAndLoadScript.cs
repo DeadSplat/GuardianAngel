@@ -53,25 +53,24 @@ public class SaveAndLoadScript : MonoBehaviour
 	{
 		if (SceneManager.GetActiveScene ().name != "init")
 		{
-			if (AllowLoading == true) 
-			{
-				//settingsManagerScript = GameObject.Find ("SettingsManager").GetComponent<SettingsManager> ();
-
-				//cam = settingsManagerScript.cam;
-				cam = Camera.main;
-				VisualSettingsComponent = cam.GetComponent<PostProcessingBehaviour> ();
-
-				CheckPlayerDataFile ();
-
-				LoadPlayerData ();
-				LoadSettingsData ();
-
-				CheckUsername ();
-			}
+			Invoke ("StartLoading", 18);
 		}
+	}
 
-		//Application.targetFrameRate = 20;
+	void StartLoading ()
+	{
+		if (AllowLoading == true) 
+		{
+			cam = Camera.main;
+			VisualSettingsComponent = cam.GetComponent<PostProcessingBehaviour> ();
 
+			CheckPlayerDataFile ();
+
+			LoadPlayerData ();
+			LoadSettingsData ();
+
+			CheckUsername ();
+		}
 	}
 
 	void Update ()
@@ -86,34 +85,27 @@ public class SaveAndLoadScript : MonoBehaviour
 
 	void FixedUpdate ()
 	{
-		if (framerateScript != null) 
-		{
-			if (framerateScript.averageFramerate < 30) 
-			{
-				LowFpsTime += Time.fixedDeltaTime;
+		if (gameControllerScript.isCutsceneComplete == true) {
+			if (framerateScript != null) {
+				if (framerateScript.averageFramerate < 30) {
+					LowFpsTime += Time.fixedDeltaTime;
 
-				if (LowFpsTime > 10) 
-				{
-					QualitySettingsIndex = 0;
-					Application.targetFrameRate = -1;
+					if (LowFpsTime > 10) {
+						QualitySettingsIndex = 0;
+						Application.targetFrameRate = -1;
 
-					if (Screen.width > 640 || Screen.height > 360) 
-					{
-						Screen.SetResolution (640, 360, Screen.fullScreen);
+						if (Screen.width > 640 || Screen.height > 360) {
+							Screen.SetResolution (640, 360, Screen.fullScreen);
+						}
+
+						SaveSettingsData ();
+						LoadSettingsData ();
+						Debug.Log ("Lowered quality settings because of low average framerate.");
 					}
-
-					SaveSettingsData ();
-					LoadSettingsData ();
-					Debug.Log ("Lowered quality settings because of low average framerate.");
-				}
-			} 
-
-			else 
-			
-			{
-				if (LowFpsTime != 0) 
-				{
-					LowFpsTime = 0;
+				} else {
+					if (LowFpsTime != 0) {
+						LowFpsTime = 0;
+					}
 				}
 			}
 		}

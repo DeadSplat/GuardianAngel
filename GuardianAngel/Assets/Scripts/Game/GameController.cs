@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour
 	public Terrain terrain;
 	public WeatherSystem weatherSystem;
 	public int thisDifficulty;
+	public bool isCutsceneComplete;
 
 	public int SwitchesActivated;
 	public int MaximumSwitchesToActivate = 6;
@@ -39,8 +40,8 @@ public class GameController : MonoBehaviour
 	{
 		saveLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
 		saveLoadScript.gameControllerScript = this;
-		saveLoadScript.LoadPlayerData ();
-		saveLoadScript.LoadSettingsData ();
+
+		Invoke ("LoadStuff", 18);
 
 		thisDifficulty = saveLoadScript.levelOneDifficulty;
 
@@ -57,6 +58,12 @@ public class GameController : MonoBehaviour
 
 		SetSwitchState (false);
 		weatherSystem.enabled = false;
+	}
+
+	void LoadStuff ()
+	{
+		saveLoadScript.LoadPlayerData ();
+		saveLoadScript.LoadSettingsData ();
 	}
 
 	public void UpdateBackgroundAmbience ()
