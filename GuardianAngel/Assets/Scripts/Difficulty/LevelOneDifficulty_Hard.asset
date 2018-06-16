@@ -13,15 +13,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Difficulty: 1
   SpawnTimes:
-  - {x: 0, y: 0}
-  - {x: 25, y: 40}
-  - {x: 15, y: 30}
-  - {x: 9, y: 15}
+  - {x: 60, y: 90}
+  - {x: 35, y: 45}
+  - {x: 15, y: 40}
+  - {x: 10, y: 15}
   - {x: 6, y: 11}
   - {x: 2, y: 4}
   - {x: 2, y: 3}
   SpawnRadii:
-  - {x: 0, y: 0}
+  - {x: 60, y: 60}
   - {x: 20, y: 60}
   - {x: 16, y: 45}
   - {x: 12, y: 30}
@@ -29,7 +29,7 @@ MonoBehaviour:
   - {x: 5, y: 9}
   - {x: 3, y: 7}
   DeactivateTimes:
-  - {x: 0, y: 0}
+  - {x: 60, y: 60}
   - {x: 25, y: 45}
   - {x: 15, y: 45}
   - {x: 10, y: 30}
@@ -52,6 +52,7 @@ MonoBehaviour:
   - {x: 140, y: 150}
   - {x: 180, y: 185}
   - {x: 200, y: 220}
-  AttackSpeed: 0.2
-  Damage: 16
+  AttackSpeed: 0.3
+  Damage: 14
   EyeMaterial: {fileID: 2100000, guid: c81f1e30029710e4b812057cab5005a3, type: 2}
+  EyeLightColor: {r: 0.6965513, g: 0, b: 1, a: 1}

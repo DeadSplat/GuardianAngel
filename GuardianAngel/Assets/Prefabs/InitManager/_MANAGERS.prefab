@@ -380,10 +380,11 @@ MonoBehaviour:
   cam: {fileID: 0}
   framerateScript: {fileID: 0}
   LowFpsTime: 0
-  QualitySettingsIndex: 1
+  QualitySettingsIndex: 2
   useHdr: 1
   sunShaftsEnabled: 1
   GrassDensity: 0
+  mouseSensitivity: 2
   MasterVolume: 1
   SoundtrackVolume: 1
   EffectsVolume: 1
@@ -391,10 +392,11 @@ MonoBehaviour:
     Username: Default
     levelOneDifficulty: 0
   SettingsData:
-    QualitySettingsIndex: 1
+    QualitySettingsIndex: 2
     useHdr: 1
     sunShaftsEnabled: 1
     GrassDensity: 0
+    mouseSensitivity: 2
     MasterVolume: 1
     SoundtrackVolume: 1
     EffectsVolume: 1

@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
 	public LevelOneDifficulty[] levelOneDifficulty;
 
 	public MeshRenderer[] Eyes;
+	public Light[] EyeLights;
 
 	[Header ("Attacking")]
 	public MeshRenderer AttackMesh;
@@ -83,6 +84,11 @@ public class Enemy : MonoBehaviour
 		foreach (MeshRenderer eye in Eyes) 
 		{
 			eye.material = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].EyeMaterial;
+		}
+
+		foreach (Light eyelight in EyeLights)
+		{
+			eyelight.color = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].EyeLightColor;
 		}
 	}
 

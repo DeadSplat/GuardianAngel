@@ -26,6 +26,9 @@ public class WeatherSystem : MonoBehaviour
 	public Light Sun;
 	public AutoMoveAndRotate SunAutoRotateScript;
 
+	[Header ("Wind")]
+	public WindZone GlobalWind;
+
 	void Start ()
 	{
 		ResetLightningTime ();

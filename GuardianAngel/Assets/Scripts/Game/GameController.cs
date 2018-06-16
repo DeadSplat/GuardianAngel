@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class GameController : MonoBehaviour 
@@ -10,6 +11,7 @@ public class GameController : MonoBehaviour
 	public WeatherSystem weatherSystem;
 	public int thisDifficulty;
 	public bool isCutsceneComplete;
+	public bool EnteredBunker;
 
 	public int SwitchesActivated;
 	public int MaximumSwitchesToActivate = 6;
@@ -29,6 +31,8 @@ public class GameController : MonoBehaviour
 	[Header ("Background audio")]
 	public GameObject BackgroundAmbienceParent;
 	public AudioSource[] BackgroundAmbience;
+	public Slider AudioSlider;
+	public TextMeshProUGUI AudioValueText;
 
 	[Header ("Level timer")]
 	public bool isCountingTime;
@@ -45,8 +49,6 @@ public class GameController : MonoBehaviour
 
 		thisDifficulty = saveLoadScript.levelOneDifficulty;
 
-		AudioListener.volume = saveLoadScript.MasterVolume;
-
 		BackgroundAmbience [0].Play ();
 
 		CellarDoorTrigger.enabled = false;
@@ -58,6 +60,21 @@ public class GameController : MonoBehaviour
 
 		SetSwitchState (false);
 		weatherSystem.enabled = false;
+
+		Invoke ("LoadAudioValue", 2);
+		float AudioVolVal = (float)System.Math.Round (AudioSlider.value * 100, 0);
+		AudioValueText.text = "" + AudioVolVal + "%";
+	}
+
+	public void EnterBunker ()
+	{
+		EnteredBunker = true;
+	}
+
+	void LoadAudioValue ()
+	{
+		AudioSlider.value = saveLoadScript.MasterVolume;
+		SetAudioSliderValue ();
 	}
 
 	void LoadStuff ()
@@ -114,5 +131,17 @@ public class GameController : MonoBehaviour
 		{
 			switchObject.SetActive (switchIsInteractable);
 		}
+	}
+
+	public void SetAudioSliderValue ()
+	{
+		AudioListener.volume = AudioSlider.value;
+		float AudioVolVal = (float)System.Math.Round (AudioSlider.value * 100, 0);
+		AudioValueText.text = "" + AudioVolVal + "%";
+	}
+
+	public void SaveAudioSliderValue ()
+	{
+		saveLoadScript.SaveSettingsData ();
 	}
 }

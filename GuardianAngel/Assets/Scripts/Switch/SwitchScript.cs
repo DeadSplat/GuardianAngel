@@ -20,6 +20,7 @@ public class SwitchScript : MonoBehaviour
 	public LineRenderer line;
 
 	public bool isMasterSwitch;
+	public GameObject StaticAngels;
 
 	void Start ()
 	{	
@@ -33,6 +34,7 @@ public class SwitchScript : MonoBehaviour
 		SwitchAnim.SetTrigger ("ActivateSwitch");
 		SwitchMoveSound.Play ();
 		activated = true;
+		weatherSystem.GlobalWind.windMain += 16;
 	}
 
 	// Called on animation to set lights
@@ -71,6 +73,7 @@ public class SwitchScript : MonoBehaviour
 		{
 			SetObjectiveText ("Activate " + gameControllerScript.MaximumSwitchesToActivate + " switches");
 			gameControllerScript.SetSwitchState (true);
+			StaticAngels.SetActive (false);
 		}
 	}
 

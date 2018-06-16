@@ -42,6 +42,9 @@ public class SaveAndLoadScript : MonoBehaviour
 	public int GrassDensity;
 
 	[Space (10)]
+	public float mouseSensitivity = 2;
+
+	[Space (10)]
 	public float MasterVolume;
 	public float SoundtrackVolume;
 	public float EffectsVolume;
@@ -55,6 +58,8 @@ public class SaveAndLoadScript : MonoBehaviour
 		{
 			Invoke ("StartLoading", 18);
 		}
+
+		Invoke ("StartLoading", 1);
 	}
 
 	void StartLoading ()
@@ -62,7 +67,10 @@ public class SaveAndLoadScript : MonoBehaviour
 		if (AllowLoading == true) 
 		{
 			cam = Camera.main;
-			VisualSettingsComponent = cam.GetComponent<PostProcessingBehaviour> ();
+
+			if (VisualSettingsComponent != null) {
+				VisualSettingsComponent = cam.GetComponent<PostProcessingBehaviour> ();
+			}
 
 			CheckPlayerDataFile ();
 
@@ -85,26 +93,39 @@ public class SaveAndLoadScript : MonoBehaviour
 
 	void FixedUpdate ()
 	{
-		if (gameControllerScript.isCutsceneComplete == true) {
-			if (framerateScript != null) {
-				if (framerateScript.averageFramerate < 30) {
-					LowFpsTime += Time.fixedDeltaTime;
+		if (gameControllerScript != null) 
+		{
+			if (gameControllerScript.isCutsceneComplete == true) 
+			{
+				if (framerateScript != null) 
+				{
+					if (framerateScript.averageFramerate < 30) 
+					{
+						LowFpsTime += Time.fixedDeltaTime;
 
-					if (LowFpsTime > 10) {
-						QualitySettingsIndex = 0;
-						Application.targetFrameRate = -1;
+						if (LowFpsTime > 10)
+						{
+							QualitySettingsIndex = 0;
+							Application.targetFrameRate = -1;
 
-						if (Screen.width > 640 || Screen.height > 360) {
-							Screen.SetResolution (640, 360, Screen.fullScreen);
+							if (Screen.width > 640 || Screen.height > 360) 
+							{
+								Screen.SetResolution (640, 360, Screen.fullScreen);
+							}
+
+							SaveSettingsData ();
+							LoadSettingsData ();
+							Debug.Log ("Lowered quality settings because of low average framerate.");
 						}
+					} 
 
-						SaveSettingsData ();
-						LoadSettingsData ();
-						Debug.Log ("Lowered quality settings because of low average framerate.");
-					}
-				} else {
-					if (LowFpsTime != 0) {
-						LowFpsTime = 0;
+					else 
+					
+					{
+						if (LowFpsTime != 0)
+						{
+							LowFpsTime = 0;
+						}
 					}
 				}
 			}
@@ -318,12 +339,17 @@ public class SaveAndLoadScript : MonoBehaviour
 				useHdr = false;
 			}
 
-			if (QualitySettingsIndex == 1) 
+			if (QualitySettingsIndex > 0) 
 			{
 				VisualSettingsComponent.enabled = true;
 				sunShaftsEnabled = true;
 				useHdr = true;
 			}
+
+			mouseSensitivity = 0.5f * (
+			    playerControllerScript_P1.fpsController.m_MouseLook.XSensitivity +
+			    playerControllerScript_P1.fpsController.m_MouseLook.YSensitivity
+			);
 
 			MasterVolume = Mathf.Clamp (AudioListener.volume, 0, 1);
 		}
@@ -380,11 +406,13 @@ public class SaveAndLoadScript : MonoBehaviour
 			data.sunShaftsEnabled = false;
 		}
 
-		if (data.QualitySettingsIndex == 1) 
+		if (data.QualitySettingsIndex > 0) 
 		{
 			data.useHdr = true;
 			data.sunShaftsEnabled = true;
 		}
+
+		data.mouseSensitivity = mouseSensitivity;
 
 		data.MasterVolume 	  = Mathf.Clamp (MasterVolume, 	   0, 1);
 		data.SoundtrackVolume = Mathf.Clamp (SoundtrackVolume, 0, 1);
@@ -472,12 +500,17 @@ public class SaveAndLoadScript : MonoBehaviour
 			sunShaftsEnabled = false;
 		}
 
-		if (QualitySettingsIndex == 1) 
+		if (QualitySettingsIndex > 0) 
 		{
-			VisualSettingsComponent.enabled = true;
+			if (VisualSettingsComponent != null)
+			{
+				VisualSettingsComponent.enabled = true;
+			}
 			useHdr = true;
 			sunShaftsEnabled = true;
 		}
+
+		mouseSensitivity = data.mouseSensitivity;
 
 		MasterVolume = data.MasterVolume;
 		SoundtrackVolume = data.SoundtrackVolume;
@@ -494,6 +527,13 @@ public class SaveAndLoadScript : MonoBehaviour
 		{
 			framerateScript.isVisible = false;
 		}
+
+		if (playerControllerScript_P1 != null) 
+		{
+			playerControllerScript_P1.fpsController.m_MouseLook.XSensitivity = mouseSensitivity;
+			playerControllerScript_P1.fpsController.m_MouseLook.YSensitivity = mouseSensitivity;
+		}
+
 		AudioListener.volume = Mathf.Clamp (MasterVolume, 0, 1);
 	}
 
@@ -533,8 +573,11 @@ public class SaveAndLoadScript : MonoBehaviour
 			cam.GetComponent<VolumetricLightRenderer> ().enabled = true;
 		}
 			
-		cam.allowHDR = useHdr;
-		cam.GetComponent<SunShafts> ().enabled = sunShaftsEnabled;
+		if (cam != null) 
+		{
+			cam.allowHDR = useHdr;
+			cam.GetComponent<SunShafts> ().enabled = sunShaftsEnabled;
+		}
 	
 	}
 
@@ -554,6 +597,8 @@ public class SaveAndLoadScript : MonoBehaviour
 		public bool sunShaftsEnabled;
 
 		public int GrassDensity;
+
+		public float mouseSensitivity;
 
 		public float MasterVolume;
 		public float SoundtrackVolume;

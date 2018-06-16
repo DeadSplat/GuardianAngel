@@ -17,4 +17,5 @@ public class LevelOneDifficulty : ScriptableObject
 	public float AttackSpeed = 0.5f;
 	public int Damage;
 	public Material EyeMaterial;
+	public Color EyeLightColor;
 }

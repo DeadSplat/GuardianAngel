@@ -7,6 +7,14 @@ public class CutsceneEvent : MonoBehaviour
 	public UnityEvent OnBeginCutscene;
 	public UnityEvent OnEndCutscene;
 
+	void Update ()
+	{
+		if (Input.GetKeyDown (KeyCode.Space)) 
+		{
+			EndCutscene ();
+		}
+	}
+
 	public void BeginCutscene ()
 	{
 		OnBeginCutscene.Invoke ();

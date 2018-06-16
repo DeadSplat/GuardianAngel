@@ -3,12 +3,14 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.PostProcessing;
 using UnityEngine.Audio;
+using UnityEngine.UI;
 using UnityStandardAssets.Characters.FirstPerson;
 using InControl;
 using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
+	public GameController gameControllerScript;
 	public SaveAndLoadScript saveLoadScript;
 	public LocalSceneLoader localSceneLoaderScript;
 	public PostProcessingProfile postProcess;
@@ -25,6 +27,9 @@ public class PlayerController : MonoBehaviour
 	public float MovementY;
 	public bool WalkState;
 	private float initalRunSpeed;
+
+	public Slider MouseSensitivitySlider;
+	public TextMeshProUGUI MouseSensValueText;
 
 	[Header ("Pausing")]
 	public bool isPaused;
@@ -93,6 +98,8 @@ public class PlayerController : MonoBehaviour
 	[Header ("Misc")]
 	public Transform DonateBox;
 	public string donateBoxUrlName = "https://spalato-bros.itch.io/guardian-angel";
+	public Transform UltraZangiefZ;
+	public string UltraZangiefZUrlName = "https://www.youtube.com/watch?v=_BYtDok-H58";
 
 	void Start ()
 	{
@@ -106,16 +113,25 @@ public class PlayerController : MonoBehaviour
 		InvokeRepeating ("CheckRegenHealth", 0, 1);
 		FlashlightObject.SetActive (false);
 		InvokeRepeating ("CheckCursor", 0, 1);
+		cursorManager.HideCursor ();
+		MouseSensitivitySlider.value = saveLoadScript.mouseSensitivity;
+		UpdateMouseSensValue ();
 	}
 
 	void CheckCursor ()
 	{
-		if (isPaused == false && CurrentHealth > 0)
+		if (isPaused == false && CurrentHealth > 0 && gameControllerScript.EnteredBunker == false)
 		{
-			if (Cursor.lockState != CursorLockMode.Locked) 
+			if (Cursor.lockState != CursorLockMode.Locked)
 			{
 				cursorManager.HideCursor ();
-			}
+			} 
+		}
+
+		else 
+
+		{
+			cursorManager.ShowCursor ();
 		}
 	}
 
@@ -247,7 +263,7 @@ public class PlayerController : MonoBehaviour
 			float HeartBeatPitch = -0.082f * SprintTimeRemaining + 2.5f;
 			HeartBeatSound.pitch = Mathf.Lerp (HeartBeatSound.pitch, HeartBeatPitch, Time.deltaTime);
 
-			float HeartBeatVolume = -0.0321f * SprintTimeRemaining + 0.9f;
+			float HeartBeatVolume = -0.0321f * SprintTimeRemaining + 0.7f;
 			HeartBeatSound.volume = Mathf.Lerp (HeartBeatSound.volume, HeartBeatVolume, Time.deltaTime);
 		} 
 
@@ -648,11 +664,18 @@ public class PlayerController : MonoBehaviour
 				RaycastHit hit;
 				Ray ray = PlayerCam.ScreenPointToRay (Input.mousePosition);
 
-				if (Physics.Raycast (ray, out hit, 2f)) {
+				if (Physics.Raycast (ray, out hit, 2f)) 
+				{
 					Transform objectHit = hit.transform;
 
-					if (objectHit == DonateBox) {
+					if (objectHit == DonateBox) 
+					{
 						DonateBox.GetComponent <OpenUrlOnPress> ().OpenUrl (donateBoxUrlName);
+					}
+
+					if (objectHit == UltraZangiefZ) 
+					{
+						UltraZangiefZ.GetComponent <OpenUrlOnPress> ().OpenUrl (UltraZangiefZUrlName);
 					}
 				}
 			}
@@ -721,5 +744,21 @@ public class PlayerController : MonoBehaviour
 
 		playerActions.Pause.AddDefaultBinding (Key.Escape);
 		playerActions.Pause.AddDefaultBinding (InputControlType.Command);
+	}
+
+	public void UpdateMouseSensValue ()
+	{
+		float MouseSensVal = (float)System.Math.Round (MouseSensitivitySlider.value, 1);
+		MouseSensValueText.text = "" + MouseSensVal;
+	}
+
+	public void SetMouseSensitivity ()
+	{
+		float Sens = MouseSensitivitySlider.value;
+
+		fpsController.m_MouseLook.XSensitivity = Sens;
+		fpsController.m_MouseLook.YSensitivity = Sens;
+
+		saveLoadScript.SaveSettingsData ();
 	}
 }
