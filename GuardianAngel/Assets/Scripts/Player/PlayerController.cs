@@ -97,9 +97,10 @@ public class PlayerController : MonoBehaviour
 
 	[Header ("Misc")]
 	public Transform DonateBox;
-	public string donateBoxUrlName = "https://spalato-bros.itch.io/guardian-angel";
-	public Transform UltraZangiefZ;
-	public string UltraZangiefZUrlName = "https://www.youtube.com/watch?v=_BYtDok-H58";
+	public string donateBoxUrlName = "https://www.indiegogo.com/projects/guardian-angel-pc-horror/x/18926960#/";
+
+	public Transform[] HardModeBoxes;
+	public string[] HardModeUrl;
 
 	void Start ()
 	{
@@ -379,16 +380,12 @@ public class PlayerController : MonoBehaviour
 					{
 						switchScript.ActivateSwitch ();
 					}
-
-					Debug.Log ("Activated a switch."); 
 				}
-					
 	
 				if (objectHit.tag == "Flashlight_Pickup") 
 				{
 					OnFlashlightPickup.Invoke ();
 					ObjectiveText.text = "Strobe flashlight: Left-mouse";
-					Debug.Log ("Used/picked up flashlight.");
 				}
 			}
 
@@ -582,7 +579,8 @@ public class PlayerController : MonoBehaviour
 
 	void SetFlashlightSetting (bool Strong)
 	{
-		if (Strong == true) {
+		if (Strong == true) 
+		{
 			// Set flashlight settings to focussed.
 			Flashlight.range = Mathf.Lerp (
 				Flashlight.range, 
@@ -609,7 +607,11 @@ public class PlayerController : MonoBehaviour
 			);
 
 			return;
-		} else {
+		} 
+
+		else 
+		
+		{
 			// Set flashlight settings to normal.
 			Flashlight.range = Mathf.Lerp (
 				Flashlight.range, 
@@ -636,29 +638,37 @@ public class PlayerController : MonoBehaviour
 			);
 		}
 	}
-		
 
 	void CheckEnemies ()
 	{
-		if (FlashlightObject.activeInHierarchy == true) {
+		if (FlashlightObject.activeInHierarchy == true)
+		{
 			// Player pressed flashlight.
-			if (playerActions.Flashlight.IsPressed) {
+			if (playerActions.Flashlight.IsPressed)
+			{
 				// If enemy checker is off.
-				if (EnemyChecker.enabled == false) {
+				if (EnemyChecker.enabled == false) 
+				{
 					EnemyChecker.enabled = true; // Turn on enemy checker.
 				}
 
 				SetFlashlightSetting (true);
-			} else {
+			} 
+
+			else 
+			
+			{
 				// If enemy checker is on.
-				if (EnemyChecker.enabled == true) {
+				if (EnemyChecker.enabled == true) 
+				{
 					EnemyChecker.enabled = false; // Turn of enemy checker.
 				}
 
 				SetFlashlightSetting (false);
 			}
 
-			if (playerActions.Flashlight.WasPressed) {
+			if (playerActions.Flashlight.WasPressed) 
+			{
 				FocusFlashlightSound.Play ();
 
 				RaycastHit hit;
@@ -673,14 +683,18 @@ public class PlayerController : MonoBehaviour
 						DonateBox.GetComponent <OpenUrlOnPress> ().OpenUrl (donateBoxUrlName);
 					}
 
-					if (objectHit == UltraZangiefZ) 
+					for (int i = 0; i < HardModeBoxes.Length; i++)
 					{
-						UltraZangiefZ.GetComponent <OpenUrlOnPress> ().OpenUrl (UltraZangiefZUrlName);
+						if (objectHit == HardModeBoxes [i]) 
+						{
+							HardModeBoxes [i].GetComponent <OpenUrlOnPress> ().OpenUrl (HardModeUrl [i]);
+						}
 					}
 				}
 			}
 
-			if (playerActions.Flashlight.WasReleased) {
+			if (playerActions.Flashlight.WasReleased) 
+			{
 				NormalFlashlightSound.Play ();
 			}
 		}

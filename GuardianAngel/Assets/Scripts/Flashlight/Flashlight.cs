@@ -11,7 +11,6 @@ public class Flashlight : MonoBehaviour
 	public float MinHeight = 1.2f;
 	public float MaxHeight = 2.4f;
 
-
 	void OnTriggerEnter (Collider other)
 	{
 		if (other.tag == "Enemy" || other.tag == "Untagged") 
