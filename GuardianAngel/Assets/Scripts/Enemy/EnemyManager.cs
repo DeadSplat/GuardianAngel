@@ -2,7 +2,8 @@
 
 public class EnemyManager : MonoBehaviour
 {
-	public GameController gameControllerScript;
+	public static EnemyManager instance { get; private set; }
+
 	public Transform Player;
 	public LevelOneDifficulty[] LevelOneDifficulty;
 
@@ -14,7 +15,6 @@ public class EnemyManager : MonoBehaviour
 	public bool enemiesCanSpawn;
 	public GameObject[] Enemies;
 
-
 	[Header ("Activation")]
 	public float nextSpawnTimeRemaining;
 	public Vector2[] SpawnTimes;
@@ -24,11 +24,16 @@ public class EnemyManager : MonoBehaviour
 	public float nextDeactivateTimeRemaining;
 	public Vector2[] DeactivateTimes;
 
+	void Awake ()
+	{
+		instance = this;
+	}
+
 	void Start ()
 	{
-		SpawnTimes = LevelOneDifficulty [gameControllerScript.thisDifficulty].SpawnTimes;
-		SpawnRadii = LevelOneDifficulty [gameControllerScript.thisDifficulty].SpawnRadii;
-		DeactivateTimes = LevelOneDifficulty [gameControllerScript.thisDifficulty].DeactivateTimes;
+		SpawnTimes = LevelOneDifficulty [GameController.instance.thisDifficulty].SpawnTimes;
+		SpawnRadii = LevelOneDifficulty [GameController.instance.thisDifficulty].SpawnRadii;
+		DeactivateTimes = LevelOneDifficulty [GameController.instance.thisDifficulty].DeactivateTimes;
 		SetJumpscareAngelEyes ();
 	}
 
@@ -36,7 +41,7 @@ public class EnemyManager : MonoBehaviour
 	{
 		foreach (MeshRenderer eye in AngelEyes)
 		{
-			eye.material = AngelEyeMaterials [gameControllerScript.thisDifficulty];
+			eye.material = AngelEyeMaterials [GameController.instance.thisDifficulty];
 		}
 	}
 
@@ -85,8 +90,8 @@ public class EnemyManager : MonoBehaviour
 	public void GetNextSpawnTime ()
 	{
 		nextSpawnTimeRemaining = Random.Range (
-			SpawnTimes[gameControllerScript.SwitchesActivated].x, 
-			SpawnTimes[gameControllerScript.SwitchesActivated].y
+			SpawnTimes[GameController.instance.SwitchesActivated].x, 
+			SpawnTimes[GameController.instance.SwitchesActivated].y
 		);
 	}
 
@@ -95,13 +100,13 @@ public class EnemyManager : MonoBehaviour
 		int enemyId = Random.Range (0, Enemies.Length); // Get next enemyId.
 
 		float nextSpawnOffsetX = Random.Range (
-			SpawnRadii[gameControllerScript.SwitchesActivated].x, 
-			SpawnRadii[gameControllerScript.SwitchesActivated].y
+			SpawnRadii[GameController.instance.SwitchesActivated].x, 
+			SpawnRadii[GameController.instance.SwitchesActivated].y
 		);
 
 		float nextSpawnOffsetZ = Random.Range (
-			SpawnRadii[gameControllerScript.SwitchesActivated].x, 
-			SpawnRadii[gameControllerScript.SwitchesActivated].y
+			SpawnRadii[GameController.instance.SwitchesActivated].x, 
+			SpawnRadii[GameController.instance.SwitchesActivated].y
 		);
 
 		// Get new spawn position based on player origin with offset.
@@ -117,8 +122,8 @@ public class EnemyManager : MonoBehaviour
 	public void GetNextDeactivateTime ()
 	{
 		nextDeactivateTimeRemaining = Random.Range (
-			DeactivateTimes[gameControllerScript.SwitchesActivated].x, 
-			DeactivateTimes[gameControllerScript.SwitchesActivated].y
+			DeactivateTimes[GameController.instance.SwitchesActivated].x, 
+			DeactivateTimes[GameController.instance.SwitchesActivated].y
 		);
 	}
 

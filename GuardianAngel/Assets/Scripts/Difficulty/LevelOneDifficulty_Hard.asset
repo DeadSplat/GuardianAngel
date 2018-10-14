@@ -56,3 +56,4 @@ MonoBehaviour:
   Damage: 14
   EyeMaterial: {fileID: 2100000, guid: c81f1e30029710e4b812057cab5005a3, type: 2}
   EyeLightColor: {r: 0.6965513, g: 0, b: 1, a: 1}
+  EyeLightIntensity: 1

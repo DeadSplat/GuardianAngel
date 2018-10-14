@@ -4,7 +4,8 @@ using UnityStandardAssets.ImageEffects;
 
 public class WeatherSystem : MonoBehaviour 
 {
-	public GameController gameControllerScript;
+	public static WeatherSystem instance { get; private set; }
+
 	public SunShafts sunShaftsScript;
 
 	[Header ("Lightning")]
@@ -28,6 +29,11 @@ public class WeatherSystem : MonoBehaviour
 
 	[Header ("Wind")]
 	public WindZone GlobalWind;
+
+	void Awake ()
+	{
+		instance = this;
+	}
 
 	void Start ()
 	{
@@ -57,7 +63,7 @@ public class WeatherSystem : MonoBehaviour
 		{
 			SunAutoRotateScript.enabled = false;
 			Sun.enabled = false;
-			gameControllerScript.MasterAmbience.Play ();
+			GameController.instance.MasterAmbience.Play ();
 		}
 	}
 
@@ -68,7 +74,7 @@ public class WeatherSystem : MonoBehaviour
 			if (NewLightningTime > 0)
 			{
 				NewLightningTime -= Time.deltaTime;
-				float targetRainVol = Mathf.Clamp (0.125f * gameControllerScript.SwitchesActivated, 0, 1);
+				float targetRainVol = Mathf.Clamp (0.125f * GameController.instance.SwitchesActivated, 0, 1);
 				RainLoop.volume = Mathf.Lerp (RainLoop.volume, targetRainVol, 3 * Time.deltaTime);
 				return;
 			}
@@ -98,7 +104,7 @@ public class WeatherSystem : MonoBehaviour
 	public void UpdateRainEmission ()
 	{
 		var RainEmission = Rain.emission;
-		RainEmission.rateOverTime = 166.66f * gameControllerScript.SwitchesActivated;
+		RainEmission.rateOverTime = 166.66f * GameController.instance.SwitchesActivated;
 	}
 
 	void ResetLightningTime ()

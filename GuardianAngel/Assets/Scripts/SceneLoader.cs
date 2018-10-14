@@ -8,6 +8,8 @@ using TMPro;
 
 public class SceneLoader : MonoBehaviour 
 {
+	public static SceneLoader instance { get; private set; }
+
 	public bool isLoading;
 	public float delay; // How long before the actual loading of the next scene starts.
 	public string SceneName; // The name of the scene that other scripts can modify. The next scene should loaded by this name.
@@ -21,6 +23,11 @@ public class SceneLoader : MonoBehaviour
 	public ParticleSystem[] LoadingParticles;
 
 	private AsyncOperation async = null; // The async operation variable. 
+
+	void Awake ()
+	{
+		instance = this;
+	}
 
 	void Start () 
 	{
@@ -108,5 +115,6 @@ public class SceneLoader : MonoBehaviour
 		// Finally, we can activate the newly loaded scene.
 		async.allowSceneActivation = true;
 		SceneLoaderUI.Play ("SceneLoaderUIDisappear");
+		System.GC.Collect ();
 	}
 }

@@ -2,10 +2,6 @@
 
 public class Enemy : MonoBehaviour 
 {
-	public PlayerController playerControllerScript;
-	public GameController gameControllerScript;
-	public SaveAndLoadScript saveAndLoadScript;
-	public EnemyManager enemyManagerScript;
 	public Transform Player;
 	public Camera PlayerCam;
 	public LevelOneDifficulty[] levelOneDifficulty;
@@ -59,36 +55,28 @@ public class Enemy : MonoBehaviour
 		isDefending = false;
 		InvokeRepeating ("CheckAngelAttackCol", 0, AttackSpeed);
 
-		saveAndLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
 		RefreshDifficulty ();
 
 		InvokeRepeating ("GetNewMovementSpeed", 0, 3);
 	}
 
-	void OnEnable ()
-	{
-		if (saveAndLoadScript == null) 
-		{
-			saveAndLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
-		} 
-	}
-
 	void RefreshDifficulty ()
 	{
-		FluidAttackSpeeds = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].FluidAttackSpeeds;
-		TeleportAttackSpeeds = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].TeleportAttackSpeeds;
-		AttackSpeed = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].AttackSpeed;
-		Damage = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].Damage;
+		FluidAttackSpeeds = levelOneDifficulty [SaveAndLoadScript.instance.levelOneDifficulty].FluidAttackSpeeds;
+		TeleportAttackSpeeds = levelOneDifficulty [SaveAndLoadScript.instance.levelOneDifficulty].TeleportAttackSpeeds;
+		AttackSpeed = levelOneDifficulty [SaveAndLoadScript.instance.levelOneDifficulty].AttackSpeed;
+		Damage = levelOneDifficulty [SaveAndLoadScript.instance.levelOneDifficulty].Damage;
 
 		// Updates the eyes.
 		foreach (MeshRenderer eye in Eyes) 
 		{
-			eye.material = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].EyeMaterial;
+			eye.material = levelOneDifficulty [SaveAndLoadScript.instance.levelOneDifficulty].EyeMaterial;
 		}
 
 		foreach (Light eyelight in EyeLights)
 		{
-			eyelight.color = levelOneDifficulty [saveAndLoadScript.levelOneDifficulty].EyeLightColor;
+			eyelight.color = levelOneDifficulty [SaveAndLoadScript.instance.levelOneDifficulty].EyeLightColor;
+			eyelight.intensity = levelOneDifficulty [SaveAndLoadScript.instance.levelOneDifficulty].EyeLightIntensity;
 		}
 	}
 
@@ -96,7 +84,7 @@ public class Enemy : MonoBehaviour
 	{
 		CheckDefendingTimer ();
 
-		if (saveAndLoadScript != null) 
+		if (SaveAndLoadScript.instance != null) 
 		{
 			GenerateNextTeleportMovement ();
 		}
@@ -107,14 +95,14 @@ public class Enemy : MonoBehaviour
 
 	void CheckPlayerHealth ()
 	{
-		if (playerControllerScript.CurrentHealth <= 0) 
+		if (PlayerController.instance.CurrentHealth <= 0) 
 		{
-			if (enemyManagerScript.enabled == true) 
+			if (EnemyManager.instance.enabled == true) 
 			{
-				enemyManagerScript.enabled = false;
-				gameControllerScript.BackgroundAmbienceParent.SetActive (false);
-				playerControllerScript.HeartBeatSound.Stop ();
-				playerControllerScript.BreathingSound.Stop ();
+				EnemyManager.instance.enabled = false;
+				GameController.instance.BackgroundAmbienceParent.SetActive (false);
+				PlayerController.instance.HeartBeatSound.Stop ();
+				PlayerController.instance.BreathingSound.Stop ();
 			}
 
 			gameObject.SetActive (false);
@@ -124,16 +112,16 @@ public class Enemy : MonoBehaviour
 	void GetNewMovementSpeed ()
 	{
 		MovementSpeed = Random.Range (
-			FluidAttackSpeeds [gameControllerScript.SwitchesActivated].x, 
-			FluidAttackSpeeds [gameControllerScript.SwitchesActivated].y
+			FluidAttackSpeeds [GameController.instance.SwitchesActivated].x, 
+			FluidAttackSpeeds [GameController.instance.SwitchesActivated].y
 		);
 	}
 
 	void GetNewTeleportSpeed ()
 	{
 		TeleportAttackSpeed = Random.Range (
-			TeleportAttackSpeeds [gameControllerScript.SwitchesActivated].x, 
-			TeleportAttackSpeeds [gameControllerScript.SwitchesActivated].y
+			TeleportAttackSpeeds [GameController.instance.SwitchesActivated].x, 
+			TeleportAttackSpeeds [GameController.instance.SwitchesActivated].y
 		);
 	}
 
@@ -191,7 +179,7 @@ public class Enemy : MonoBehaviour
 			Vector3.Distance (Player.transform.position, transform.position) <= 5) 
 		{
 			AngelAttackCol.enabled = !AngelAttackCol.enabled;
-			playerControllerScript.TakeDamage (Damage);
+			PlayerController.instance.TakeDamage (Damage);
 
 			// Off screen jump scare.
 			if (onScreen == false) 

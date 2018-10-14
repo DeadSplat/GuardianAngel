@@ -8,13 +8,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.PostProcessing;
 
 using UnityStandardAssets.ImageEffects;
+using UnityStandardAssets.Characters.FirstPerson;
 
 using TMPro.Examples;
 
 public class SaveAndLoadScript : MonoBehaviour 
 {
-	public PlayerController playerControllerScript_P1;
-	public GameController gameControllerScript;
+	public static SaveAndLoadScript instance { get; private set; }
 
 	public bool AllowLoading = true;
 	public bool AllowSaving = true;
@@ -51,6 +51,11 @@ public class SaveAndLoadScript : MonoBehaviour
 
 	public playerData PlayerData;
 	public settingsData SettingsData;
+
+	void Awake ()
+	{
+		instance = this;
+	}
 
 	void Start ()
 	{
@@ -93,9 +98,9 @@ public class SaveAndLoadScript : MonoBehaviour
 
 	void FixedUpdate ()
 	{
-		if (gameControllerScript != null) 
+		if (GameController.instance != null) 
 		{
-			if (gameControllerScript.isCutsceneComplete == true) 
+			if (GameController.instance.isCutsceneComplete == true) 
 			{
 				if (framerateScript != null) 
 				{
@@ -154,7 +159,7 @@ public class SaveAndLoadScript : MonoBehaviour
 	void GetPlayerData ()
 	{
 		#if !UNITY_EDITOR
-			if (gameControllerScript != null) 
+			if (GameController.instance != null) 
 			{
 				if (File.Exists (Application.persistentDataPath + "/" + Username + "_PlayerConfig.dat") == true) 
 				{
@@ -169,7 +174,7 @@ public class SaveAndLoadScript : MonoBehaviour
 		#endif
 
 		#if UNITY_EDITOR
-			if (gameControllerScript != null) 
+			if (GameController.instance != null) 
 			{
 				if (File.Exists (Application.persistentDataPath + "/" + Username + "_PlayerConfig_Editor.dat") == true) 
 				{
@@ -347,8 +352,8 @@ public class SaveAndLoadScript : MonoBehaviour
 			}
 
 			mouseSensitivity = 0.5f * (
-			    playerControllerScript_P1.fpsController.m_MouseLook.XSensitivity +
-			    playerControllerScript_P1.fpsController.m_MouseLook.YSensitivity
+			    FirstPersonController.instance.m_MouseLook.XSensitivity +
+			    FirstPersonController.instance.m_MouseLook.YSensitivity
 			);
 
 			MasterVolume = Mathf.Clamp (AudioListener.volume, 0, 1);
@@ -528,10 +533,10 @@ public class SaveAndLoadScript : MonoBehaviour
 			framerateScript.isVisible = false;
 		}
 
-		if (playerControllerScript_P1 != null) 
+		if (PlayerController.instance != null) 
 		{
-			playerControllerScript_P1.fpsController.m_MouseLook.XSensitivity = mouseSensitivity;
-			playerControllerScript_P1.fpsController.m_MouseLook.YSensitivity = mouseSensitivity;
+			FirstPersonController.instance.m_MouseLook.XSensitivity = mouseSensitivity;
+			FirstPersonController.instance.m_MouseLook.YSensitivity = mouseSensitivity;
 		}
 
 		AudioListener.volume = Mathf.Clamp (MasterVolume, 0, 1);
@@ -545,12 +550,12 @@ public class SaveAndLoadScript : MonoBehaviour
 			useHdr = false;
 			sunShaftsEnabled = false;
 
-			if (gameControllerScript != null) 
+			if (GameController.instance != null) 
 			{
-				gameControllerScript.terrain.detailObjectDensity = 0;
-				gameControllerScript.terrain.treeMaximumFullLODCount = 0;
-				gameControllerScript.terrain.treeDistance = 1;
-				gameControllerScript.terrain.heightmapPixelError = 20;
+				GameController.instance.terrain.detailObjectDensity = 0;
+				GameController.instance.terrain.treeMaximumFullLODCount = 0;
+				GameController.instance.terrain.treeDistance = 1;
+				GameController.instance.terrain.heightmapPixelError = 20;
 			}
 
 			cam.GetComponent<VolumetricLightRenderer> ().enabled = false;
@@ -562,12 +567,12 @@ public class SaveAndLoadScript : MonoBehaviour
 			useHdr = true;
 			sunShaftsEnabled = true;
 
-			if (gameControllerScript != null) 
+			if (GameController.instance != null) 
 			{
-				gameControllerScript.terrain.detailObjectDensity = 0.2f;
-				gameControllerScript.terrain.treeMaximumFullLODCount = 50;
-				gameControllerScript.terrain.treeDistance = 2000;
-				gameControllerScript.terrain.heightmapPixelError = 1;
+				GameController.instance.terrain.detailObjectDensity = 0.2f;
+				GameController.instance.terrain.treeMaximumFullLODCount = 50;
+				GameController.instance.terrain.treeDistance = 2000;
+				GameController.instance.terrain.heightmapPixelError = 1;
 			}
 
 			cam.GetComponent<VolumetricLightRenderer> ().enabled = true;

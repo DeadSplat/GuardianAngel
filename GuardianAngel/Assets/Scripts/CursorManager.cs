@@ -2,6 +2,13 @@
 
 public class CursorManager : MonoBehaviour
 {
+	public static CursorManager instance { get; private set; }
+
+	void Awake ()
+	{
+		instance = this;
+	}
+
 	void Start ()
 	{
 		HideCursor ();

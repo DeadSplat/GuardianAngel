@@ -1,25 +1,18 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class LocalSceneLoader : MonoBehaviour 
 {
-	[Tooltip ("Scene loader from Init.")]
-	public SceneLoader sceneLoaderScript;
 	[Tooltip ("Scene is going to laod another scene.")]
 	public bool SceneLoadCommit;
-
-	void Start ()
-	{
-		sceneLoaderScript = GameObject.Find ("SceneLoader").GetComponent<SceneLoader> ();
-	}
 		
 	public void LoadScene (string sceneName)
 	{
 		if (SceneLoadCommit == false)
 		{
 			SceneLoadCommit = true;
-			sceneLoaderScript.SceneName = sceneName;
+			SceneLoader.instance.SceneName = sceneName;
 			StartCoroutine (SceneLoadSequence ());
 		}
 
@@ -28,7 +21,7 @@ public class LocalSceneLoader : MonoBehaviour
 
 	IEnumerator SceneLoadSequence ()
 	{
-		sceneLoaderScript.StartLoadSequence ();
+		SceneLoader.instance.StartLoadSequence ();
 		yield return null;
 	}
 }

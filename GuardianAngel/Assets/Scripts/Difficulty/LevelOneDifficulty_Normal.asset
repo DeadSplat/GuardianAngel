@@ -13,9 +13,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Difficulty: 0
   SpawnTimes:
-  - {x: 100, y: 130}
-  - {x: 50, y: 70}
-  - {x: 30, y: 55}
+  - {x: 100, y: 150}
+  - {x: 75, y: 100}
+  - {x: 45, y: 65}
   - {x: 25, y: 35}
   - {x: 24, y: 30}
   - {x: 12, y: 20}
@@ -38,11 +38,11 @@ MonoBehaviour:
   - {x: 15, y: 35}
   FluidAttackSpeeds:
   - {x: 0, y: 0}
-  - {x: 20, y: 26}
-  - {x: 25, y: 35}
-  - {x: 30, y: 45}
-  - {x: 50, y: 55}
-  - {x: 55, y: 60}
+  - {x: 10, y: 15}
+  - {x: 15, y: 25}
+  - {x: 20, y: 35}
+  - {x: 40, y: 45}
+  - {x: 55, y: 50}
   - {x: 60, y: 65}
   TeleportAttackSpeeds:
   - {x: 0, y: 0}
@@ -54,5 +54,5 @@ MonoBehaviour:
   - {x: 140, y: 160}
   AttackSpeed: 0.35
   Damage: 7
-  EyeMaterial: {fileID: 2100000, guid: fdbba9e08b369424b9e7909a3e910f37, type: 2}
-  EyeLightColor: {r: 1, g: 0.39310342, b: 0, a: 1}
+  EyeMaterial: {fileID: 2100000, guid: 853579b3588f5934eb55c21ab8c4c565, type: 2}
+  EyeLightColor: {r: 1, g: 0.39310342, b: 0, a: 0}

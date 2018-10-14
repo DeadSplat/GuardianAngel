@@ -10,15 +10,11 @@ using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
-	public GameController gameControllerScript;
-	public SaveAndLoadScript saveLoadScript;
+	public static PlayerController instance { get; private set; }
+
 	public LocalSceneLoader localSceneLoaderScript;
 	public PostProcessingProfile postProcess;
 	public AudioMixer masterAudioMix;
-	public CursorManager cursorManager;
-
-	[Header ("Input")]
-	public FirstPersonController fpsController;
 	public PlayerActions playerActions;
 
 	[Range (-1, 1)]
@@ -102,37 +98,40 @@ public class PlayerController : MonoBehaviour
 	public Transform[] HardModeBoxes;
 	public string[] HardModeUrl;
 
+	void Awake ()
+	{
+		instance = this;
+	}
+
 	void Start ()
 	{
-		saveLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
-		saveLoadScript.playerControllerScript_P1 = this;
-		saveLoadScript.cam = PlayerCam;
-		saveLoadScript.VisualSettingsComponent = saveLoadScript.cam.GetComponent <PostProcessingBehaviour> ();
+		SaveAndLoadScript.instance.cam = PlayerCam;
+		SaveAndLoadScript.instance.VisualSettingsComponent = SaveAndLoadScript.instance.cam.GetComponent <PostProcessingBehaviour> ();
 		CreatePlayerActions ();
 		CurrentHealth = StartingHealth;
-		initalRunSpeed = fpsController.m_RunSpeed;
+		initalRunSpeed = FirstPersonController.instance.m_RunSpeed;
 		InvokeRepeating ("CheckRegenHealth", 0, 1);
 		FlashlightObject.SetActive (false);
 		InvokeRepeating ("CheckCursor", 0, 1);
-		cursorManager.HideCursor ();
-		MouseSensitivitySlider.value = saveLoadScript.mouseSensitivity;
+		CursorManager.instance.HideCursor ();
+		MouseSensitivitySlider.value = SaveAndLoadScript.instance.mouseSensitivity;
 		UpdateMouseSensValue ();
 	}
 
 	void CheckCursor ()
 	{
-		if (isPaused == false && CurrentHealth > 0 && gameControllerScript.EnteredBunker == false)
+		if (isPaused == false && CurrentHealth > 0 && GameController.instance.EnteredBunker == false)
 		{
 			if (Cursor.lockState != CursorLockMode.Locked)
 			{
-				cursorManager.HideCursor ();
+				CursorManager.instance.HideCursor ();
 			} 
 		}
 
 		else 
 
 		{
-			cursorManager.ShowCursor ();
+			CursorManager.instance.ShowCursor ();
 		}
 	}
 
@@ -441,12 +440,12 @@ public class PlayerController : MonoBehaviour
 					// Allow faster sprint with special key.
 					if (Input.GetKeyDown (KeyCode.C)) 
 					{
-						fpsController.m_RunSpeed *= 5;
+						FirstPersonController.instance.m_RunSpeed *= 5;
 					}
 
 					if (Input.GetKeyUp (KeyCode.C)) 
 					{
-						fpsController.m_RunSpeed = initalRunSpeed;
+						FirstPersonController.instance.m_RunSpeed = initalRunSpeed;
 					}
 					#endif
 				} 
@@ -550,7 +549,7 @@ public class PlayerController : MonoBehaviour
 			}
 
 			PlayerCam.fieldOfView = Mathf.Lerp (PlayerCam.fieldOfView, IdleFov, FovSmoothing * Time.deltaTime);
-			fpsController.m_RunSpeed = initalRunSpeed;
+			FirstPersonController.instance.m_RunSpeed = initalRunSpeed;
 		}
 	}
 
@@ -573,7 +572,7 @@ public class PlayerController : MonoBehaviour
 		{
 			CurrentHealth = 0;
 			GameOverObject.SetActive (true);
-			fpsController.enabled = false;
+			FirstPersonController.instance.enabled = false;
 		}
 	}
 
@@ -705,13 +704,13 @@ public class PlayerController : MonoBehaviour
 		MovementX = playerActions.Move.Value.x;
 		MovementY = playerActions.Move.Value.y;
 
-		fpsController.m_MouseLook.xRot = playerActions.Look.Value.y * fpsController.m_MouseLook.XSensitivity;
-		fpsController.m_MouseLook.yRot = playerActions.Look.Value.x * fpsController.m_MouseLook.YSensitivity;
+		FirstPersonController.instance.m_MouseLook.xRot = playerActions.Look.Value.y * FirstPersonController.instance.m_MouseLook.XSensitivity;
+		FirstPersonController.instance.m_MouseLook.yRot = playerActions.Look.Value.x * FirstPersonController.instance.m_MouseLook.YSensitivity;
 
-		fpsController.m_IsWalking = WalkState;
+		FirstPersonController.instance.m_IsWalking = WalkState;
 
-		fpsController.horizontal = MovementX;
-		fpsController.vertical = MovementY;
+		FirstPersonController.instance.horizontal = MovementX;
+		FirstPersonController.instance.vertical = MovementY;
 	}
 
 	void CreatePlayerActions ()
@@ -770,9 +769,9 @@ public class PlayerController : MonoBehaviour
 	{
 		float Sens = MouseSensitivitySlider.value;
 
-		fpsController.m_MouseLook.XSensitivity = Sens;
-		fpsController.m_MouseLook.YSensitivity = Sens;
+		FirstPersonController.instance.m_MouseLook.XSensitivity = Sens;
+		FirstPersonController.instance.m_MouseLook.YSensitivity = Sens;
 
-		saveLoadScript.SaveSettingsData ();
+		SaveAndLoadScript.instance.SaveSettingsData ();
 	}
 }

@@ -18,4 +18,5 @@ public class LevelOneDifficulty : ScriptableObject
 	public int Damage;
 	public Material EyeMaterial;
 	public Color EyeLightColor;
+	public float EyeLightIntensity;
 }

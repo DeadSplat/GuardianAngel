@@ -6,9 +6,9 @@ using TMPro;
 
 public class GameController : MonoBehaviour 
 {
-	public SaveAndLoadScript saveLoadScript;
+	public static GameController instance { get; private set; }
+	 
 	public Terrain terrain;
-	public WeatherSystem weatherSystem;
 	public int thisDifficulty;
 	public bool isCutsceneComplete;
 	public bool EnteredBunker;
@@ -40,14 +40,16 @@ public class GameController : MonoBehaviour
 	public string thisLevelTime;
 	public TextMeshProUGUI LevelTimerEndText;
 
+	void Awake ()
+	{
+		instance = this;
+	}
+
 	void Start ()
 	{
-		saveLoadScript = GameObject.Find ("SaveAndLoad").GetComponent<SaveAndLoadScript> ();
-		saveLoadScript.gameControllerScript = this;
-
 		Invoke ("LoadStuff", 18);
 
-		thisDifficulty = saveLoadScript.levelOneDifficulty;
+		thisDifficulty = SaveAndLoadScript.instance.levelOneDifficulty;
 
 		BackgroundAmbience [0].Play ();
 
@@ -59,7 +61,7 @@ public class GameController : MonoBehaviour
 		InvokeRepeating ("LevelTimer", 0, 1);
 
 		SetSwitchState (false);
-		weatherSystem.enabled = false;
+		WeatherSystem.instance.enabled = false;
 
 		Invoke ("LoadAudioValue", 2);
 		float AudioVolVal = (float)System.Math.Round (AudioSlider.value * 100, 0);
@@ -73,14 +75,14 @@ public class GameController : MonoBehaviour
 
 	void LoadAudioValue ()
 	{
-		AudioSlider.value = saveLoadScript.MasterVolume;
+		AudioSlider.value = SaveAndLoadScript.instance.MasterVolume;
 		SetAudioSliderValue ();
 	}
 
 	void LoadStuff ()
 	{
-		saveLoadScript.LoadPlayerData ();
-		saveLoadScript.LoadSettingsData ();
+		SaveAndLoadScript.instance.LoadPlayerData ();
+		SaveAndLoadScript.instance.LoadSettingsData ();
 	}
 
 	public void UpdateBackgroundAmbience ()
@@ -142,6 +144,6 @@ public class GameController : MonoBehaviour
 
 	public void SaveAudioSliderValue ()
 	{
-		saveLoadScript.SaveSettingsData ();
+		SaveAndLoadScript.instance.SaveSettingsData ();
 	}
 }

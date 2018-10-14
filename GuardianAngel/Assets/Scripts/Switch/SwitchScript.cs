@@ -2,11 +2,7 @@
 
 public class SwitchScript : MonoBehaviour
 {
-	public PlayerController playerControllerScript;
-	public GameController gameControllerScript;
 	public ParticleSystem Rings;
-	public WeatherSystem weatherSystem;
-	public EnemyManager enemyManagerScript;
 
 	public Animator SwitchAnim;
 	public Light[] RedLights;
@@ -34,7 +30,7 @@ public class SwitchScript : MonoBehaviour
 		SwitchAnim.SetTrigger ("ActivateSwitch");
 		SwitchMoveSound.Play ();
 		activated = true;
-		weatherSystem.GlobalWind.windMain += 16;
+		WeatherSystem.instance.GlobalWind.windMain += 16;
 	}
 
 	// Called on animation to set lights
@@ -45,34 +41,34 @@ public class SwitchScript : MonoBehaviour
 		SwitchActivateSound.Play ();
 		SwitchActivateParticles.Play ();
 
-		if (enemyManagerScript.enemiesCanSpawn == false && isMasterSwitch == false)
+		if (EnemyManager.instance.enemiesCanSpawn == false && isMasterSwitch == false)
 		{
-			enemyManagerScript.enemiesCanSpawn = true;
-			enemyManagerScript.GetNextSpawnTime ();
-			enemyManagerScript.GetNextDeactivateTime ();
+			EnemyManager.instance.enemiesCanSpawn = true;
+			EnemyManager.instance.GetNextSpawnTime ();
+			EnemyManager.instance.GetNextDeactivateTime ();
 		}
 
 		if (isMasterSwitch == false)
 		{
-			gameControllerScript.SwitchesActivated++;
-			SetObjectiveText (gameControllerScript.SwitchesActivated + "/" + gameControllerScript.MaximumSwitchesToActivate);
+			GameController.instance.SwitchesActivated++;
+			SetObjectiveText (GameController.instance.SwitchesActivated + "/" + GameController.instance.MaximumSwitchesToActivate);
 			SetLineToRadioTower ();
-			gameControllerScript.RefreshSwitchesLines ();
-			gameControllerScript.UpdateBackgroundAmbience ();
-			weatherSystem.UpdateRainEmission ();
+			GameController.instance.RefreshSwitchesLines ();
+			GameController.instance.UpdateBackgroundAmbience ();
+			WeatherSystem.instance.UpdateRainEmission ();
 
-			if (gameControllerScript.SwitchesActivated == 2) 
+			if (GameController.instance.SwitchesActivated == 2) 
 			{
-				weatherSystem.enabled = true;
-				weatherSystem.SetSunMovement (true);
+				WeatherSystem.instance.enabled = true;
+				WeatherSystem.instance.SetSunMovement (true);
 			}
 		}
 
 		else 
 		
 		{
-			SetObjectiveText ("Activate " + gameControllerScript.MaximumSwitchesToActivate + " switches");
-			gameControllerScript.SetSwitchState (true);
+			SetObjectiveText ("Activate " + GameController.instance.MaximumSwitchesToActivate + " switches");
+			GameController.instance.SetSwitchState (true);
 			StaticAngels.SetActive (false);
 		}
 	}
@@ -96,22 +92,22 @@ public class SwitchScript : MonoBehaviour
 	void SetLineToRadioTower ()
 	{
 		line.SetPosition (0, transform.position);
-		line.SetPosition (1, gameControllerScript.RadioTowerLink.position);
+		line.SetPosition (1, GameController.instance.RadioTowerLink.position);
 		line.enabled = true;
 	}
 
 	void SetObjectiveText (string Objective)
 	{
-		playerControllerScript.UIObjectiveAnim.SetTrigger ("Objective");
+		PlayerController.instance.UIObjectiveAnim.SetTrigger ("Objective");
 
-		if (gameControllerScript.SwitchesActivated < gameControllerScript.MaximumSwitchesToActivate)
+		if (GameController.instance.SwitchesActivated < GameController.instance.MaximumSwitchesToActivate)
 		{
-			playerControllerScript.ObjectiveText.text = Objective;
+			PlayerController.instance.ObjectiveText.text = Objective;
 		} 
 
 		else 
 		{
-			playerControllerScript.ObjectiveText.text = "Run to the bunker";
+			PlayerController.instance.ObjectiveText.text = "Run to the bunker";
 			Rings.Play ();
 		}
 	}
