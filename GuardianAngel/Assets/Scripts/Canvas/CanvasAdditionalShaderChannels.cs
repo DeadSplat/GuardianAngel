@@ -4,7 +4,7 @@ using UnityEngine.UI;
 [ExecuteInEditMode]
 public class CanvasAdditionalShaderChannels : MonoBehaviour 
 {
-	public AdditionalCanvasShaderChannels canvaschannels;
+	public AdditionalCanvasShaderChannels[] canvaschannels;
 	public Canvas[] canvases;
 
 	void Awake ()
@@ -28,10 +28,12 @@ public class CanvasAdditionalShaderChannels : MonoBehaviour
 	{
 		foreach (Canvas canvas in canvases) 
 		{
-			if (canvas.additionalShaderChannels != canvaschannels) 
-			{
-				canvas.additionalShaderChannels = canvaschannels;
-			}
+			canvas.additionalShaderChannels |= canvaschannels[0];
+			canvas.additionalShaderChannels |= canvaschannels[1];
+			canvas.additionalShaderChannels |= canvaschannels[2];
+			canvas.additionalShaderChannels |= canvaschannels[3];
+			canvas.additionalShaderChannels |= canvaschannels[4];
+
 		}
 	}
 }
