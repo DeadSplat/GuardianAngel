@@ -102,8 +102,10 @@ public class SaveAndLoadScript : MonoBehaviour
 		{
 			if (GameController.instance.isCutsceneComplete == true) 
 			{
+				/*
 				if (framerateScript != null) 
 				{
+
 					if (framerateScript.averageFramerate < 30) 
 					{
 						LowFpsTime += Time.fixedDeltaTime;
@@ -133,6 +135,7 @@ public class SaveAndLoadScript : MonoBehaviour
 						}
 					}
 				}
+				*/
 			}
 		}
 	}

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Difficulty: 1
   SpawnTimes:
-  - {x: 60, y: 90}
+  - {x: 50, y: 90}
   - {x: 35, y: 45}
-  - {x: 15, y: 40}
-  - {x: 10, y: 15}
+  - {x: 15, y: 26}
+  - {x: 6, y: 10}
   - {x: 6, y: 11}
   - {x: 2, y: 4}
   - {x: 2, y: 3}
@@ -31,11 +31,11 @@ MonoBehaviour:
   DeactivateTimes:
   - {x: 60, y: 60}
   - {x: 25, y: 45}
-  - {x: 15, y: 45}
-  - {x: 10, y: 30}
-  - {x: 10, y: 30}
-  - {x: 10, y: 30}
-  - {x: 10, y: 30}
+  - {x: 25, y: 45}
+  - {x: 25, y: 30}
+  - {x: 20, y: 30}
+  - {x: 15, y: 30}
+  - {x: 15, y: 30}
   FluidAttackSpeeds:
   - {x: 0, y: 0}
   - {x: 20, y: 26}
@@ -46,14 +46,16 @@ MonoBehaviour:
   - {x: 80, y: 100}
   TeleportAttackSpeeds:
   - {x: 0, y: 0}
-  - {x: 25, y: 30}
+  - {x: 50, y: 50}
+  - {x: 50, y: 50}
+  - {x: 50, y: 70}
+  - {x: 70, y: 70}
   - {x: 70, y: 90}
-  - {x: 95, y: 120}
-  - {x: 140, y: 150}
-  - {x: 180, y: 185}
-  - {x: 200, y: 220}
+  - {x: 70, y: 90}
   AttackSpeed: 0.3
-  Damage: 14
+  Damage: 16
   EyeMaterial: {fileID: 2100000, guid: c81f1e30029710e4b812057cab5005a3, type: 2}
   EyeLightColor: {r: 0.6965513, g: 0, b: 1, a: 1}
   EyeLightIntensity: 1
+  TeleportTime: {x: 2, y: 3}
+  DefendingTimerDuration: 2

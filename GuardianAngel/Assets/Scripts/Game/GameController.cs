@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using TMPro.Examples;
+using UnityEngine.PostProcessing;
 
 public class GameController : MonoBehaviour 
 {
@@ -39,6 +41,7 @@ public class GameController : MonoBehaviour
 	public float LevelTimerElapsed;
 	public string thisLevelTime;
 	public TextMeshProUGUI LevelTimerEndText;
+	public TMP_UiFrameRateCounter framrateCounter;
 
 	void Awake ()
 	{
@@ -66,6 +69,11 @@ public class GameController : MonoBehaviour
 		Invoke ("LoadAudioValue", 2);
 		float AudioVolVal = (float)System.Math.Round (AudioSlider.value * 100, 0);
 		AudioValueText.text = "" + AudioVolVal + "%";
+
+		SaveAndLoadScript.instance.cam = PlayerController.instance.PlayerCam;
+		SaveAndLoadScript.instance.VisualSettingsComponent = 
+			PlayerController.instance.PlayerCam.GetComponent<PostProcessingBehaviour> ();
+		SaveAndLoadScript.instance.framerateScript = framrateCounter;
 	}
 
 	public void EnterBunker ()

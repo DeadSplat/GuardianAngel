@@ -366,8 +366,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2219717fae85c684783bfb28469399c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerControllerScript_P1: {fileID: 0}
-  gameControllerScript: {fileID: 0}
   AllowLoading: 1
   AllowSaving: 1
   Username: default
@@ -375,7 +373,7 @@ MonoBehaviour:
   LevelOneDifficulties:
   - {fileID: 11400000, guid: 4bda68f3e85a1f6468dc06a14ae4de75, type: 2}
   - {fileID: 11400000, guid: c3db425df48f86e42ad70fda986a9945, type: 2}
-  VisualSettings: {fileID: 0}
+  VisualSettings: {fileID: 11400000, guid: 49c51a739ade9734db3b0f937c15de5a, type: 2}
   VisualSettingsComponent: {fileID: 0}
   cam: {fileID: 0}
   framerateScript: {fileID: 0}

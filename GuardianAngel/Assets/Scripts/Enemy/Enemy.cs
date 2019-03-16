@@ -66,6 +66,7 @@ public class Enemy : MonoBehaviour
 		TeleportAttackSpeeds = levelOneDifficulty [SaveAndLoadScript.instance.levelOneDifficulty].TeleportAttackSpeeds;
 		AttackSpeed = levelOneDifficulty [SaveAndLoadScript.instance.levelOneDifficulty].AttackSpeed;
 		Damage = levelOneDifficulty [SaveAndLoadScript.instance.levelOneDifficulty].Damage;
+		DefendingTimerDuration = levelOneDifficulty [SaveAndLoadScript.instance.levelOneDifficulty].DefendingTimerDuration;
 
 		// Updates the eyes.
 		foreach (MeshRenderer eye in Eyes) 
@@ -91,6 +92,12 @@ public class Enemy : MonoBehaviour
 
 		CheckIfVisible ();
 		CheckPlayerHealth ();
+		ResetRotation ();
+	}
+
+	void ResetRotation()
+	{
+		transform.eulerAngles = new Vector3 (0, transform.eulerAngles.y, transform.eulerAngles.z);
 	}
 
 	void CheckPlayerHealth ()
@@ -137,11 +144,12 @@ public class Enemy : MonoBehaviour
 
 			if (TeleportTimeRemaining <= 0) 
 			{
-				// Calculate next teleport speed range.
-				TeleportAttackSpeed = Random.Range (250, 500);
-
 				// Calculate next teleport duration.
-				TeleportTimeDuration = Random.Range (0.1f, 0.75f);
+				TeleportTimeDuration = Random.Range (
+					levelOneDifficulty[SaveAndLoadScript.instance.levelOneDifficulty].TeleportTime.x, 
+					levelOneDifficulty[SaveAndLoadScript.instance.levelOneDifficulty].TeleportTime.y
+				);
+
 				TeleportTimeRemaining = TeleportTimeDuration;
 
 				// If is seen by the camera.
@@ -154,7 +162,7 @@ public class Enemy : MonoBehaviour
 							Vector3.MoveTowards (
 								transform.position, 
 								Player.transform.position,
-								TeleportAttackSpeed * Time.deltaTime
+								TeleportAttackSpeed
 							);
 
 						transform.LookAt (Player.transform);

@@ -19,4 +19,7 @@ public class LevelOneDifficulty : ScriptableObject
 	public Material EyeMaterial;
 	public Color EyeLightColor;
 	public float EyeLightIntensity;
+
+	public Vector2 TeleportTime = new Vector2 (0.1f, 0.75f);
+	public float DefendingTimerDuration = 2;
 }

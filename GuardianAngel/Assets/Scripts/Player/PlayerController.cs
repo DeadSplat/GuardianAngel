@@ -347,14 +347,17 @@ public class PlayerController : MonoBehaviour
 
 		else // Did not find anything to raycast on.
 		{
-			if (UIDescriptionAnim.GetBool ("Visible") == true) 
+			if (UIDescriptionAnim.enabled == true && CutsceneEvent.instance.cutsceneEnded == true) 
 			{
-				UIDescriptionAnim.SetBool ("Visible", false);
-			}
+				if (UIDescriptionAnim.GetBool ("Visible") == true) 
+				{
+					UIDescriptionAnim.SetBool ("Visible", false);
+				}
 
-			if (UIActionAnim.GetBool ("Visible") == true) 
-			{
-				UIActionAnim.SetBool ("Visible", false);
+				if (UIActionAnim.GetBool ("Visible") == true) 
+				{
+					UIActionAnim.SetBool ("Visible", false);
+				}
 			}
 		}
 	}
